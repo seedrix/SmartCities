@@ -1,0 +1,20 @@
+\begin{thebibliography}{1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\doi}[1]{https://doi.org/#1}
+
+\bibitem{ref_url1}
+Service computing department homepage,
+  \url{https://www.iaas.uni-stuttgart.de/en/department-service-computing/}
+
+\bibitem{ref_proc1}
+Author, A.B.: Contribution title. In: 9th International Proceedings on
+  Proceedings. pp.~1--2 (2019)
+
+\bibitem{ref_article1}
+Author, F.: Article title. Journal pp. 99--110 (2016)
+
+\bibitem{ref_book1}
+Author, F., Author, S., Author, T.: Book title. Publisher, 2nd edn.
+
+\end{thebibliography}
