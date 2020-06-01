@@ -1,11 +1,24 @@
-(define (domain <domain-name>)
-    (:types room shop_list – object
-        shop1 shop2 shop3 - room
-        shop_list1 shop_list2 - shop_list)
-    (:predicates )
+(define (domain Guidance)
+    (:requirements :typing :universal-preconditions)
+    (:types shop shop_list – object        
+        ; monday tuesday wednesday thursday friday saturday sunday - day)
+    (:predicates
+        ; (at-day ?x - shop_list ?y – day)
+        ; (list-set ?x – shop_list)
+        (at-shop ?x - shop_list ?y – shop)
+        (shop-set ?x – shop_list)
+        ; (free ?x – arm)
+        ; (carry ?x – arm ?y – ball))
 
-    <PDDL code for types>
-    <PDDL code for predicates>
-    <PDDL code for action schemas>
+    (:functions (people-at-shop ?x - shop) - number        
+
+    (:action set_day
+    :parameters (?x - shop_list ?y – shop)
+    :precondition (not (shop-set ?x))
+    :effect (and (shop-set ?x)
+               (at-shop ?x ?y)
+               (increase (people-at-shop ?y))
+            )
+    )
 )
 
