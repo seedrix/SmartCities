@@ -1,19 +1,23 @@
 (define (domain Guidance)
-    (:requirements :typing :universal-preconditions)
-    (:types shop shop_list – object)        
+    (:requirements :typing :universal-preconditions :negative-preconditions :fluents :equality)
+    (:types shop list – object)        
     (:predicates
-        (at-shop ?x – shop_list ?y – shop)
-        (shop-set ?x – shop_list)
+        (at-shop ?x - list ?y - shop)
+        (list-set ?x - list)
+        (shop-option ?x - list ?y - shop)
+    )
 
-    ; (:functions (people-at-shop ?x - shop) - number        
+    (:functions (people-at-shop ?x - shop) - fluent)        
 
-    ; (:action set_day
-    ; :parameters (?x - shop_list ?y – shop)
-    ; :precondition (not (shop-set ?x))
-    ; :effect (and (shop-set ?x)
-    ;            (at-shop ?x ?y)
-    ;            (increase (people-at-shop ?y))
-    ;         )
-    ; )
+    (:action choose
+        :parameters (?list -list ?shop -shop)
+        :precondition (and (not (list-set ?list))
+                            (shop-option ?list ?shop)
+        )
+        :effect (and (list-set ?list)
+                   (at-shop ?list ?shop)
+                   (increase (people-at-shop ?shop) 1)
+                )
+    )
 )
 
