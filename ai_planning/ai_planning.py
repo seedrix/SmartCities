@@ -9,8 +9,8 @@ if (resp["status"] == "error"):
     print("error:")
     print(resp["result"])
     print(resp["result"]["error"])      
-    
 
 else:
     print(resp["result"]["output"])
     print(resp['result']['plan'])
+     

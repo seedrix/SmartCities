@@ -17,7 +17,7 @@
             (list-set list3)
             (list-set list4)
             (list-set list5)
-            (<= (people-at-shop shop1), 7)            
+            (< (people-at-shop shop1) 10)            
         )
     )
 )
