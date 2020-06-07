@@ -12,5 +12,10 @@ if (resp["status"] == "error"):
 
 else:
     print(resp["result"]["output"])
-    print(resp['result']['plan'])
+    plan = resp['result']['plan']
+    for step in plan:
+        action = step["action"]
+        name = step["name"]
+        print(name)
+        # print(action)
      

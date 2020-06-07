@@ -1,13 +1,13 @@
 (define (domain Guidance)
-    (:requirements :typing :universal-preconditions :negative-preconditions :fluents :equality)
-    (:types shop list – object)        
+    (:requirements :typing :negative-preconditions :fluents :equality)
+    (:types shop list – object)
     (:predicates
         (at-shop ?x - list ?y - shop)
         (list-set ?x - list)
         (shop-option ?x - list ?y - shop)
     )
 
-    (:functions (people-at-shop ?x - shop) - fluent)        
+    (:functions (people-at-shop ?x - shop))        
 
     (:action choose
         :parameters (?list -list ?shop -shop)
