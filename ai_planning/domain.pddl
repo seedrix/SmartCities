@@ -1,5 +1,5 @@
 (define (domain Guidance)
-    (:requirements :typing :universal-preconditions :negative-preconditions :fluents :equality)
+    (:requirements :typing :universal-preconditions)
     (:types shop list – object)        
     (:predicates
         (at-shop ?x - list ?y - shop)
@@ -7,7 +7,7 @@
         (shop-option ?x - list ?y - shop)
     )
 
-    (:functions (people-at-shop ?x - shop) - fluent)        
+    (:functions (people-at-shop ?x - shop) - number)        
 
     (:action choose
         :parameters (?list -list ?shop -shop)
