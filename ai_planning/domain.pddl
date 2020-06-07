@@ -1,5 +1,5 @@
 (define (domain Guidance)
-    (:requirements :typing :universal-preconditions)
+    (:requirements [:typing] [:adl])
     (:types shop list – object)        
     (:predicates
         (at-shop ?x - list ?y - shop)
@@ -16,7 +16,7 @@
         )
         :effect (and (list-set ?list)
                    (at-shop ?list ?shop)
-                   (increase (people-at-shop ?shop) 1)
+                   (increase (people-at-shop ?shop) 1)   
                 )
     )
 )
