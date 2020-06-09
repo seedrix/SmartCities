@@ -1,11 +1,12 @@
 import subprocess
+import math
 
 class Solver():
     def __init__(self, path_to_ff: str):
         """susceptible to injection attacks if path_to_ff can be specified by an attacker"""
         self.solver_path = path_to_ff
 
-    def _solve(self, domain_file="domain.pddl", problem_file="problem.pddl"):
+    def _call_solver(self, domain_file="domain.pddl", problem_file="problem.pddl"):
         output = subprocess.run([self.solver_path, "-o", domain_file, "-f", problem_file], capture_output=True)
 
         if output.returncode == 1:
@@ -13,15 +14,32 @@ class Solver():
             print("Error at parsing pddl files: ")
             print(stderr)
             print(output.stdout.decode("utf-8"))
+            return False
             
         else: 
             stdout = output.stdout.decode("utf-8")
             print(stdout)
 
-    def solve_problem(self, planning_instance):
+            # TODO parsing of results
+
+            if "first search space empty" in stdout:
+                return False
+            
+            else:
+                return True
+
+    def _solve_single_problem(self, problem_str):
         with open('problem_created.pddl', 'w') as f:
-            f.write(planning_instance.to_problem_string())
-        self._solve(problem_file="problem_created.pddl")
+            f.write(problem_str)
+        return self._call_solver(problem_file="problem_created.pddl")
+
+    def solve(self, planning_instance):
+        i = 0
+        while True:
+            is_solvable = self._solve_single_problem(planning_instance.to_problem_string(i))
+            i += 1
+            if is_solvable:
+                break
 
 
 
@@ -36,7 +54,7 @@ class PlanningInstance():
             print("number of shops and len(people at shop) must be equal")
             return
 
-    def to_problem_string(self) -> str:
+    def to_problem_string(self, run_number = 0) -> str:
         problem = "(define (problem " + self.name + ")\n"
         problem += "(:domain Guidance)\n"
         problem += "(:objects "
@@ -57,22 +75,24 @@ class PlanningInstance():
         problem += ")\n"
 
         average = self._compute_average()
+        current_cap = average + run_number
+
         problem += """(:goal            
         (and (forall (?l - list)
             (list-set ?l)
         )
         (forall (?s - shop)
-            (<= (people-at-shop ?s) """ + str(average) + """)
+            (<= (people-at-shop ?s) """ + str(current_cap) + """)
         )
                     
         )
-    )
-)
+        )
+        )
         """
         return problem
 
     def _compute_average(self) -> int:
-        average = (sum(self.people_at_shop) + self.number_of_lists / self.number_of_shops) + 1
+        average = math.ceil(sum(self.people_at_shop) + self.number_of_lists / self.number_of_shops)
         print(average)
         return average
 
@@ -89,8 +109,8 @@ if __name__ == "__main__":
     people_at_shop = [0 for i in range(number_of_shops)]
     shop_options = []
     for i in range(number_of_lists):
-        shop_options.append((i, 0))
+        # shop_options.append((i, 0))
         shop_options.append((i, 1))
         shop_options.append((i, 2))
     planning_instance = PlanningInstance("week2", number_of_shops, number_of_lists, people_at_shop, shop_options)
-    solver.solve_problem(planning_instance)
+    solver.solve(planning_instance)
