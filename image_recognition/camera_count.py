@@ -3,6 +3,7 @@ import hashlib
 import paho.mqtt.client as mqtt
 import time
 import json
+import os
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -10,7 +11,7 @@ from watchdog.events import FileSystemEventHandler
 broker_hostname = "broker.hivemq.com"
 broker_port = 1883
 
-intervall_seconds = 30
+path_to_watch = "./watch_folder/"
 
 interface = "camera0"
 namespace = 'de/smartcity/2020/mymall'
@@ -92,15 +93,12 @@ case_sensitive = True
 my_event_handler = FileSystemEventHandler()
 my_event_handler.on_created = watchdog_on_created
 
+if not os.path.exists(path_to_watch):
+    os.makedirs(path_to_watch)
+
 
 my_observer = Observer()
-my_observer.schedule(my_event_handler, path="./watch_folder/", recursive=True)
+my_observer.schedule(my_event_handler, path=path_to_watch, recursive=True)
 my_observer.start()
 
 mqclient.loop_forever()
-
-	
-
-
-
-
