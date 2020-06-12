@@ -216,7 +216,6 @@ class WifiAggregator(Aggregator):
         result_transposed = {}
         for value in values.values():
             value_transposed = {value: key for key, value in value.items()}
-            logging.debug("Value %s", json.dumps(value_transposed))
             result_transposed.update(value_transposed)
         result = {value: key for key, value in result_transposed.items()}
         count_topic = get_sensor_topic(shop_id, self.sensor_type, None, 'count')
