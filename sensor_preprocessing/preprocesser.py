@@ -333,7 +333,7 @@ shop_mapping = sensor_mapper.get_sensors_to_shops_mapping()
 
 if shop_mapping is None:
     # remove if database connection is implemented
-    shop_mapping = {"bB8:27:EB:2A:C9:E6": "shop1", "wb8:27:eb:d5:36:19": "shop1"}
+    shop_mapping = {"bB8:27:EB:2A:C9:E6": "shop1", "wb8:27:eb:d5:36:19": "shop1", "ccamera0": "shop1"}
 
 mqtt_handler = MqttHandler()
 wifi_mapper = ShopMapper(mqtt_handler, "wifi", shop_mapping)
