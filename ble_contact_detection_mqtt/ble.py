@@ -4,37 +4,42 @@ import hashlib
 import json
 import subprocess
 
-broker_hostname = "broker.hivemq.com"
-broker_port = 1883
-
-interval_seconds = 30.0
-
 interface_number = 0
-namespace = 'de/smartcity/2020/mymall'
-clients_list_topic = namespace + '/ble/list'
-clients_count_topic = namespace + '/ble/count'
-
-contact_detection_service_uuid = str(UUID("fd6f"))
-print("contact_detection_service_uuid: ", contact_detection_service_uuid)
-
 command_mac = 'hciconfig hci' + str(interface_number) + ' | grep -oE "([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}"'
 
 
 def get_mac():
     process = subprocess.run(command_mac, stdout=subprocess.PIPE, shell=True)
     result = process.stdout.decode('utf-8')
-    return result.strip()
+    return 'b' + result.strip()
+
+
+broker_hostname = "broker.hivemq.com"
+broker_port = 1883
+
+retain_messages = True
+
+interval_seconds = 30.0
+
+namespace = 'de/smartcity/2020/mymall'
+clients_list_topic = namespace + '/sensors/ble/' + get_mac() + '/list'
+clients_count_topic = namespace + '/sensors/ble/' + get_mac() + '/count'
+
+contact_detection_service_uuid = str(UUID("fd6f"))
+print("contact_detection_service_uuid: ", contact_detection_service_uuid)
 
 
 def publish_data(mqclient, results):
     print(f"Connected clients ({results.get_device_count()}): {results.get_device_list()}")
-    mqclient.publish(clients_count_topic, payload=generate_payload({'count': results.get_device_count()}))
-    mqclient.publish(clients_list_topic, payload=generate_payload({'clients': results.get_device_list_hashed()}))
+    mqclient.publish(clients_count_topic, payload=generate_payload({'count': results.get_device_count()}),
+                     retain=retain_messages)
+    mqclient.publish(clients_list_topic, payload=generate_payload({'clients': results.get_device_list_hashed()}),
+                     retain=retain_messages)
     print("published data")
 
 
 def generate_payload(data):
-    payload = {'station': get_mac()}
+    payload = {'sensor_id': get_mac(), 'sensor_type': 'ble'}
     payload.update(data)
     print(payload)
     return json.dumps(payload)
@@ -50,8 +55,10 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     print(msg.topic + " " + str(msg.payload))
 
+
 def device_is_relevant(dev):
     return dev.getValueText(ScanEntry.COMPLETE_16B_SERVICES) == contact_detection_service_uuid
+
 
 class Results:
     def __init__(self):
@@ -91,12 +98,20 @@ print("Station: ", get_mac())
 mqclient = mqtt.Client()
 mqclient.on_connect = on_connect
 mqclient.on_message = on_message
-
 mqclient.connect(broker_hostname, broker_port, 60)
 
 results = Results()
 scanner = Scanner(iface=interface_number).withDelegate(ScanDelegate())
 scanner.start(passive=True)
+
+# set last will message so that cached results will be overwritten
+mqclient.will_set(clients_list_topic, payload=generate_payload({'clients': [], 'isLastWill': True}),
+                  retain=retain_messages)
+
+if not retain_messages:
+    # delete (may be existing) old retained messages
+    mqclient.publish(clients_list_topic, retain=True)
+    mqclient.publish(clients_count_topic, retain=True)
 
 mqclient.loop_start()
 while True:
@@ -119,7 +134,7 @@ while True:
                     print(f" {adtype}: {desc} = {value}")
             results.add_device(rolling_proximity_id)
             print("Found ID: ", rolling_proximity_id)
-        #for (adtype, desc, value) in dev.getScanData():
+        # for (adtype, desc, value) in dev.getScanData():
         #    print(f" {adtype}: {desc} = {value}")
     print(f"Found {results.get_device_count()}  devices")
     # Todo: Mqtt stuff
