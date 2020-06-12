@@ -15,7 +15,7 @@ path_to_watch = "./watch_folder/"
 
 interface = "camera0"
 namespace = 'de/smartcity/2020/mymall'
-camera_count_topic = namespace + '/sensors/camera/c'+interface+'/count'
+camera_count_topic = namespace + '/sensors/cam/c'+interface+'/count'
 
 BUCKET = "amazon-rek"
 
@@ -65,7 +65,7 @@ def publish_data(num_of ):
 
 
 def generate_payload(data):
-    payload = {'sensor_id': 'c'+interface, 'sensor_type': 'camera'}
+    payload = {'sensor_id': 'c'+interface, 'sensor_type': 'cam'}
     payload.update(data)
     print(payload)
     return json.dumps(payload)
