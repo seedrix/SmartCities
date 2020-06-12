@@ -15,7 +15,7 @@ path_to_watch = "./watch_folder/"
 
 interface = "camera0"
 namespace = 'de/smartcity/2020/mymall'
-camera_count_topic = namespace + '/camera/count'
+camera_count_topic = namespace + '/sensors/camera/c'+interface+'/count'
 
 BUCKET = "amazon-rek"
 
@@ -62,10 +62,10 @@ def on_message(client, userdata, msg):
 
 def publish_data(num_of ):
     print(f"Connected clients ({len(clients)}): {clients}")
-    
+
 
 def generate_payload(data):
-    payload = {'camera' : interface}
+    payload = {'sensor_id': 'c'+interface, 'sensor_type': 'camera'}
     payload.update(data)
     print(payload)
     return json.dumps(payload)
