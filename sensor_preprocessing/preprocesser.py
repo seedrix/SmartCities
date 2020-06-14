@@ -126,7 +126,7 @@ class MqttHandler:
         self.client.message_callback_add(input_topic, callback=_callback)
 
     def _default_handler(self, client, userdata, msg):
-        logging.debug("Message for topic %s is not caught by any filter: %s", msg.topic, msg)
+        logging.warning("Message for topic %s is not caught by any filter: %s", msg.topic, msg.payload)
 
     def loop_forever(self):
         self.client.loop_forever()
@@ -314,13 +314,16 @@ class ShopMapper:
         return self._map_message('count', message)
 
     def _map_message(self, suffix, message):
+        if 'sensor_id' not in message:
+            logging.warning("Can not map %s sensor message to shop: sensor_id attribute missing", self.sensor_type)
+            return
         sensor_id = message['sensor_id']
         if sensor_id not in self.sensor_to_shop_dict:
             logging.warning("No shop found for sensor from type %s with id: %s", self.sensor_type, sensor_id)
             return
         shop = self.sensor_to_shop_dict[sensor_id]
         logging.debug("Mapped sensor %s %s to shop %s", self.sensor_type, sensor_id, shop)
-        message.update({'shop_id': shop})
+        message.update({'shop_id': shop, 'sensor_type': self.sensor_type})
         return MqttHandler.MqttMessage(get_sensor_topic(shop, self.sensor_type, sensor_id, suffix, is_raw=True),
                                        message)
 
