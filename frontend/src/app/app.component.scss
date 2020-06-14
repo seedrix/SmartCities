@@ -1,0 +1,14 @@
+mat-drawer-container {
+    height: 100%
+}
+
+mat-icon {
+    padding-right: 40px;
+}
+
+mat-drawer-content::before {
+    content: '';
+    display: inline-block;
+    width: 100%;
+    height: 40px;
+}

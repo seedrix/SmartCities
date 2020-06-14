@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h3 class="mat-display-1 text-center">Available Shops</h3>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <mat-selection-list #list>
+                <mat-list-option *ngFor="let shop of shops.shop_list">
+                    {{shop.name}}
+                </mat-list-option>
+            </mat-selection-list>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <button class="accept" color="primary" mat-stroked-button>
+                <mat-icon>done</mat-icon>Send Shop List
+            </button>
+        </div>
+    </div>
+
+
+</div>
