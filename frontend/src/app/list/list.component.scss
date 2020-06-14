@@ -3,7 +3,13 @@
 }
 
 .accept {
-    width: 100%;
+    width: 100%;    
+}
+
+mat-divider {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-top-color: darkgray;
 }
 
 .spacer {
