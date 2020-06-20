@@ -7,6 +7,7 @@ import {
   animate,
   transition,
 } from '@angular/animations';
+import { NavbarService } from './services/navbar.service';
 
 @Component({
   selector: 'app-root',
@@ -36,10 +37,22 @@ import {
 export class AppComponent {
   title = 'frontend';
   showDisplays = false
-  constructor(public shops: ShopsService) {
+  constructor(public shops: ShopsService, public navbar: NavbarService) {
   }
 
   toggleDisplays() {
     this.showDisplays = !this.showDisplays
+  }
+
+  hideNavbar() {
+    this.navbar.hideNavbar()
+  }
+
+  showNavbar() {
+    this.navbar.showNavbar();
+  }
+
+  hideNavbarCalled() {
+    console.log("hide")
   }
 }

@@ -1,4 +1,4 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" *ngIf="navbar.visible">
   <button mat-icon-button (click)="drawer.toggle()">
     <mat-icon *ngIf="drawer.opened">arrow_backward</mat-icon>
     <mat-icon *ngIf="!drawer.opened">menu</mat-icon>
@@ -11,12 +11,12 @@
 <mat-drawer-container>
   <mat-drawer #drawer>
     <mat-nav-list>
-      <a mat-list-item routerLink="/" style="height: 0;"></a>
+      <a mat-list-item (click)="showNavbar()" routerLink="/" style="height: 0;"></a>
 
-      <a mat-list-item [routerLink]="'/list'">
+      <a mat-list-item (click)="showNavbar()" [routerLink]="'/list'">
         <mat-icon>store</mat-icon> Select Shops
       </a>
-      <a mat-list-item [routerLink]="'/monitor'">
+      <a mat-list-item (click)="showNavbar()" [routerLink]="'/monitor'">
         <mat-icon>analytics</mat-icon> Monitor
       </a>
 
@@ -26,7 +26,7 @@
 
 
       <div [@showHideDisplays]="showDisplays ? 'open' : 'closed'">
-        <a *ngFor="let shop of shops.shop_list | keyvalue" mat-list-item routerLink="/display/{{shop.key}}">
+        <a (click)="hideNavbar()" *ngFor="let shop of shops.shop_list | keyvalue" mat-list-item routerLink="/display/{{shop.key}}">
           <mat-icon>tv</mat-icon> {{shop.key}}
         </a>
       </div>

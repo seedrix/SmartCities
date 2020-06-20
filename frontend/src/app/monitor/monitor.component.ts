@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ShopsService } from '../services/shops.service';
+import { NavbarService } from '../services/navbar.service';
 
 @Component({
   selector: 'app-monitor',
@@ -9,9 +10,13 @@ import { ShopsService } from '../services/shops.service';
 export class MonitorComponent implements OnInit {
 
 
-  constructor(public shops: ShopsService) { }
+  constructor(public shops: ShopsService, private navbar: NavbarService) { }
 
   ngOnInit(): void {
+  }
+
+  ngAfterContentInit() {
+    this.navbar.showNavbar()
   }
 
 }
