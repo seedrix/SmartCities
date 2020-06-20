@@ -1,7 +1,7 @@
 <mat-toolbar color="primary">
   <button mat-icon-button (click)="drawer.toggle()">
     <mat-icon *ngIf="drawer.opened">arrow_backward</mat-icon>
-    <mat-icon *ngIf="!drawer.opened">menu</mat-icon> 
+    <mat-icon *ngIf="!drawer.opened">menu</mat-icon>
   </button>
   <h1 class="display-1">Guidance System</h1>
 
@@ -11,14 +11,32 @@
 <mat-drawer-container>
   <mat-drawer #drawer>
     <mat-nav-list>
+      <a mat-list-item routerLink="/" style="height: 0;"></a>
 
-      <a mat-list-item [routerLink]="'/list'"><mat-icon>store</mat-icon> Select Shops </a>
-      <a mat-list-item [routerLink]="'/monitor'"><mat-icon>analytics</mat-icon> Monitor </a>
+      <a mat-list-item [routerLink]="'/list'">
+        <mat-icon>store</mat-icon> Select Shops
+      </a>
+      <a mat-list-item [routerLink]="'/monitor'">
+        <mat-icon>analytics</mat-icon> Monitor
+      </a>
+
+      <mat-divider></mat-divider>
+
+      <button mat-button class="w-100" (click)="toggleDisplays()" matSubheader>Displays </button>
+
+
+      <div [@showHideDisplays]="showDisplays ? 'open' : 'closed'">
+        <a *ngFor="let shop of shops.shop_list" mat-list-item [routerLink]="'/display/'">
+          <mat-icon>tv</mat-icon> {{shop.name}}
+        </a>
+      </div>
+
+      <mat-divider></mat-divider>
 
     </mat-nav-list>
   </mat-drawer>
   <mat-drawer-content>
 
-      <router-outlet></router-outlet>
+    <router-outlet></router-outlet>
   </mat-drawer-content>
 </mat-drawer-container>

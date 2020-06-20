@@ -23,7 +23,7 @@
     "@angular/platform-browser-dynamic": "~9.1.9",
     "@angular/router": "~9.1.9",
     "@ng-bootstrap/ng-bootstrap": "^6.1.0",
-    "bootstrap": "^4.4.0",
+    "bootstrap": "^5.0.0-alpha1",
     "hamburgers": "^1.1.3",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
