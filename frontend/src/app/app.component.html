@@ -26,8 +26,8 @@
 
 
       <div [@showHideDisplays]="showDisplays ? 'open' : 'closed'">
-        <a *ngFor="let shop of shops.shop_list" mat-list-item [routerLink]="'/display/'">
-          <mat-icon>tv</mat-icon> {{shop.name}}
+        <a *ngFor="let shop of shops.shop_list | keyvalue" mat-list-item routerLink="/display/{{shop.key}}">
+          <mat-icon>tv</mat-icon> {{shop.key}}
         </a>
       </div>
 

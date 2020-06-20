@@ -15,12 +15,14 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {MatCardModule} from '@angular/material/card';
+import { DisplayComponent } from './display/display.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ListComponent,
-    MonitorComponent
+    MonitorComponent,
+    DisplayComponent
   ],
   imports: [
     BrowserModule,

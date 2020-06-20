@@ -1,0 +1,15 @@
+<div class="w-100 h-100 background" [ngClass]="{'closed': shop.isStop, 'opened': !shop.isStop}">
+    <div class="container text-center h-75" style="display: flex">
+        <div class="row justify-content-center align-self-center">
+            <div *ngIf="shop.isStop">
+                <h1 class="mat-display-3 ">Wait until customers leave the shop.</h1>
+            </div>
+
+            <div *ngIf="!shop.isStop">
+                <h1 class="mat-display-3">We are opened.</h1>
+            </div>
+        </div>
+
+
+    </div>
+</div>
