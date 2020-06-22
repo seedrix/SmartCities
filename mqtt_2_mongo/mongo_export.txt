@@ -1,0 +1,1 @@
+mongoexport --uri="mongodb://root:rootpassword@localhost:27017/smart_cities?authSource=admin" --collection=mqtt -o mongo.json
