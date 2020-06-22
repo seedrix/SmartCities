@@ -8,7 +8,8 @@ MQTT_BROKER = "broker.hivemq.com"
 MQTT_PORT = 1883
 MQTT_KEEPALIVE = 60
 MQTT_QOS = 2
-MQTT_TOPICS = ("de/smartcity/2020/my_test_mall/#",)  # Array of topics to subscribe; '#' subscribe to ALL available topics
+#MQTT_TOPICS = ("de/smartcity/2020/my_test_mall/#",)  # Array of topics to subscribe; '#' subscribe to ALL available topics
+MQTT_TOPICS = ("de/smartcity/2020/mymall/#",)
 
 class MQTT(object):
     def __init__(self, mongo: Mongo):

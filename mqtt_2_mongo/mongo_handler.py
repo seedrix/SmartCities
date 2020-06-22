@@ -5,6 +5,7 @@ import pymongo.collection
 import pymongo.errors
 from datetime import datetime
 import threading
+import json
 
 MONGO_IP = "localhost"
 MONGO_PORT = 27017
@@ -58,7 +59,7 @@ class Mongo(object):
         try:
             document = {
                 "topic": msg.topic,
-                "payload": msg.payload.decode(),
+                "payload": json.loads(msg.payload.decode()),
                 # "retained": msg.retain,
                 "qos": msg.qos,
                 "timestamp": int(now.timestamp()),
