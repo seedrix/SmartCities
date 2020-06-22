@@ -24,7 +24,7 @@ namespace = 'de/smartcity/2020/mymall'
 clients_list_topic = namespace + '/sensors/wifi/' + get_mac() + '/list'
 clients_count_topic = namespace + '/sensors/wifi/' + get_mac() + '/count'
 
-retain_messages = True
+retain_messages = False
 
 
 def get_connected_clients():
@@ -70,6 +70,13 @@ def generate_payload(data):
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
     print(f"Using the following topics to publish data:\n\t{clients_count_topic}\n\t{clients_list_topic}")
+    # set last will message so that cached results will be overwritten
+    client.will_set(clients_list_topic, payload=generate_payload({'clients': {}, 'isLastWill': True}),
+                    retain=retain_messages)
+    if not retain_messages:
+        # delete (may be existing) old retained messages
+        client.publish(clients_list_topic, retain=True)
+        client.publish(clients_count_topic, retain=True)
 
 
 # The callback for when a PUBLISH message is received from the server.
@@ -87,14 +94,6 @@ mqclient.on_connect = on_connect
 mqclient.on_message = on_message
 
 mqclient.connect(broker_hostname, broker_port, 60)
-
-# set last will message so that cached results will be overwritten
-mqclient.will_set(clients_list_topic, payload=generate_payload({'clients': {}, 'isLastWill': True}),
-                  retain=retain_messages)
-if not retain_messages:
-    # delete (may be existing) old retained messages
-    mqclient.publish(clients_list_topic, retain=True)
-    mqclient.publish(clients_count_topic, retain=True)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
