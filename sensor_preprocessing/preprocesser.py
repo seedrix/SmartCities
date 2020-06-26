@@ -285,7 +285,7 @@ class PeopleAggregator(Aggregator):
         import statistics
         counts = [value['count'] for value in values.values()]
         aggregated_sensors = [value['aggregated_sensors'] for value in values.values()]
-        result = statistics.median(counts)
+        result = round(statistics.median(counts))
         total_aggregated_sensors = sum(aggregated_sensors)
         count_topic = get_sensor_topic(shop_id, 'people', None, 'count', use_type_subtopic=False)
         count_result = MqttHandler.MqttMessage(count_topic, self.generate_payload(shop_id, {'count': result,
