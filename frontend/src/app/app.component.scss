@@ -1,5 +1,5 @@
 mat-drawer-container {
-    height: 100%
+    height: 100%;
 }
 
 mat-icon {
@@ -12,3 +12,12 @@ mat-icon {
 //     width: 100%;
 //     height: 40px;
 // }
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.right:hover {
+    // background-color: yellow;
+    color: white
+}

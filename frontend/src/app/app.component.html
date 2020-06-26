@@ -5,6 +5,11 @@
   </button>
   <h1 class="display-1">Guidance System</h1>
 
+  <span class="spacer"></span>
+  <a class="right" mat-button [routerLink]="''" (click)="logout()">
+    <mat-icon>power_settings_new</mat-icon> Logout
+  </a>
+
 </mat-toolbar>
 
 
@@ -26,7 +31,8 @@
 
 
       <div [@showHideDisplays]="showDisplays ? 'open' : 'closed'">
-        <a (click)="hideNavbar()" *ngFor="let shop of shops.shop_list | keyvalue" mat-list-item routerLink="/display/{{shop.key}}">
+        <a (click)="hideNavbar()" *ngFor="let shop of shops.shop_list | keyvalue" mat-list-item
+          routerLink="/display/{{shop.key}}">
           <mat-icon>tv</mat-icon> {{shop.key}}
         </a>
       </div>

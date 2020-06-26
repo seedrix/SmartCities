@@ -8,6 +8,7 @@ import {
   transition,
 } from '@angular/animations';
 import { NavbarService } from './services/navbar.service';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -37,7 +38,7 @@ import { NavbarService } from './services/navbar.service';
 export class AppComponent {
   title = 'frontend';
   showDisplays = false
-  constructor(public shops: ShopsService, public navbar: NavbarService) {
+  constructor(public shops: ShopsService, public navbar: NavbarService, private authService: AuthService) {
   }
 
   toggleDisplays() {
@@ -54,5 +55,9 @@ export class AppComponent {
 
   hideNavbarCalled() {
     console.log("hide")
+  }
+
+  logout() {
+    this.authService.logout("login");
   }
 }
