@@ -1,6 +1,5 @@
 import subprocess
 import math
-
 class Solver():
     def __init__(self, path_to_ff: str):
         """susceptible to injection attacks if path_to_ff can be specified by an attacker"""
@@ -14,19 +13,31 @@ class Solver():
             print("Error at parsing pddl files: ")
             print(stderr)
             print(output.stdout.decode("utf-8"))
-            return False
+            return None
             
         else: 
             stdout = output.stdout.decode("utf-8")
-            print(stdout)
-
-            # TODO parsing of results
 
             if "first search space empty" in stdout:
-                return False
+                return None
             
             else:
-                return True
+                result = self._parse(stdout)
+                return result
+
+    def _parse(self, output):
+        split = output.split("ff: found legal plan as follows")[1]
+        split = split.split("time spent")[0]
+        # remove empty lines
+        text = "".join([s for s in split.splitlines(True) if s.strip("\n")])
+
+        result = []
+        for line in text.split("\n"):
+            if "CHOOSE" in line:
+                list_shop = line.split("CHOOSE")[1].strip()
+                list_shop_array = list_shop.split(" ")
+                result.append(list_shop_array)               
+        return result
 
     def _solve_single_problem(self, problem_str):
         with open('problem_created.pddl', 'w') as f:
@@ -36,10 +47,11 @@ class Solver():
     def solve(self, planning_instance):
         i = 0
         while True:
-            is_solvable = self._solve_single_problem(planning_instance.to_problem_string(i))
+            result = self._solve_single_problem(planning_instance.to_problem_string(i))
             i += 1
-            if is_solvable:
+            if result is not None:
                 break
+        return result
 
 
 
@@ -93,7 +105,6 @@ class PlanningInstance():
 
     def _compute_average(self) -> int:
         average = math.ceil(sum(self.people_at_shop) + self.number_of_lists / self.number_of_shops)
-        print(average)
         return average
 
 
@@ -113,4 +124,5 @@ if __name__ == "__main__":
         shop_options.append((i, 1))
         shop_options.append((i, 2))
     planning_instance = PlanningInstance("week2", number_of_shops, number_of_lists, people_at_shop, shop_options)
-    solver.solve(planning_instance)
+    result = solver.solve(planning_instance)
+    print(result)

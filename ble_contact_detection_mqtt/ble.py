@@ -17,7 +17,7 @@ def get_mac():
 broker_hostname = "broker.hivemq.com"
 broker_port = 1883
 
-retain_messages = True
+retain_messages = False
 
 interval_seconds = 30.0
 
@@ -49,7 +49,14 @@ def generate_payload(data):
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
     print(f"Using the following topics to publish data:\n\t{clients_count_topic}\n\t{clients_list_topic}")
+    # set last will message so that cached results will be overwritten
+    client.will_set(clients_list_topic, payload=generate_payload({'clients': [], 'isLastWill': True}),
+                    retain=retain_messages)
 
+    if not retain_messages:
+        # delete (may be existing) old retained messages
+        client.publish(clients_list_topic, retain=True)
+        client.publish(clients_count_topic, retain=True)
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
@@ -103,15 +110,6 @@ mqclient.connect(broker_hostname, broker_port, 60)
 results = Results()
 scanner = Scanner(iface=interface_number).withDelegate(ScanDelegate())
 scanner.start(passive=True)
-
-# set last will message so that cached results will be overwritten
-mqclient.will_set(clients_list_topic, payload=generate_payload({'clients': [], 'isLastWill': True}),
-                  retain=retain_messages)
-
-if not retain_messages:
-    # delete (may be existing) old retained messages
-    mqclient.publish(clients_list_topic, retain=True)
-    mqclient.publish(clients_count_topic, retain=True)
 
 mqclient.loop_start()
 while True:

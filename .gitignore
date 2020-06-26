@@ -1,2 +1,3 @@
 .vscode
 image_recognition/watch_folder
+*/__pycache__/*
