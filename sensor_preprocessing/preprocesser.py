@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 import json
 import logging
 import re
+from math import ceil
 
 broker_hostname = "broker.hivemq.com"
 broker_port = 1883
@@ -285,7 +286,7 @@ class PeopleAggregator(Aggregator):
         import statistics
         counts = [value['count'] for value in values.values()]
         aggregated_sensors = [value['aggregated_sensors'] for value in values.values()]
-        result = round(statistics.median(counts))
+        result = ceil(statistics.median(counts))
         total_aggregated_sensors = sum(aggregated_sensors)
         count_topic = get_sensor_topic(shop_id, 'people', None, 'count', use_type_subtopic=False)
         count_result = MqttHandler.MqttMessage(count_topic, self.generate_payload(shop_id, {'count': result,
