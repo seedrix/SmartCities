@@ -17,7 +17,7 @@ class DB_Handler_Ai:
         if offline_test:
             print("Offline test mode, no database connection will be used!")
             return
-        MONGO_IP = "localhost"
+        MONGO_IP = "t1.max-reichel.de"
         MONGO_PORT = 27017
         MONGO_USER = "root"
         MONGO_PW = "rootpassword"
