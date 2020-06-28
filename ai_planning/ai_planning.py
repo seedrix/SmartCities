@@ -1,5 +1,9 @@
 import subprocess
 import math
+import sys
+
+assert sys.version_info >= (3, 7)
+
 class Solver():
     def __init__(self, path_to_ff: str):
         """susceptible to injection attacks if path_to_ff can be specified by an attacker"""
