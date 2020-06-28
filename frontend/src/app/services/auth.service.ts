@@ -24,7 +24,9 @@ export class AuthService {
     // const authenticated = await this.authClient.session.exists();
     const authenticated = this.isLoggedIn
     this.redirectUrl = this.router.url
-    console.log(this.redirectUrl)
+    if (this.redirectUrl === "/login") {
+      this.redirectUrl = "/list"
+    }
     this.isAuthenticated.next(authenticated);
     console.log(authenticated)
     return authenticated;
