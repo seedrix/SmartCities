@@ -34,7 +34,7 @@ def get_connected_clients():
     clients = {}
     for line in lines:
         split_line = line.split()
-        ip = split_line[2]
+        ip = split_line[2].replace(".",":") # replace dots since they can lead to problems in mongodb
         mac = split_line[1]
         name = ''
         if len(split_line) > 3:
