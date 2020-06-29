@@ -47,6 +47,26 @@ def ble_get_all():
                     mimetype="application/json")
     except Exception as e:
             return str(e), 500
+
+@app.route('/sensors/ble/get_all_count', methods=['GET'])
+def ble_get_all_count():
+    try:
+        regx = re.compile("^de/smartcity/2020/mymall/sensors/ble/.*/count")
+        return Response(response=dumps(collection.find({"topic": regx})),
+                    status=200,
+                    mimetype="application/json")
+    except Exception as e:
+            return str(e), 500
+
+@app.route('/sensors/ble/get_all_list', methods=['GET'])
+def ble_get_all_list():
+    try:
+        regx = re.compile("^de/smartcity/2020/mymall/sensors/ble/.*/list")
+        return Response(response=dumps(collection.find({"topic": regx})),
+                    status=200,
+                    mimetype="application/json")
+    except Exception as e:
+            return str(e), 500
     
 
 if __name__ == '__main__':
