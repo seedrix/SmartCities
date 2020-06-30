@@ -23,7 +23,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { HistoryComponent } from './history/history.component'
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
-import { ChartsModule, WavesModule } from 'angular-bootstrap-md';
 import { NextShopComponent } from './next-shop/next-shop.component'
 
 @NgModule({
