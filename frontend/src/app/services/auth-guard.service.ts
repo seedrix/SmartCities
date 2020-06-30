@@ -13,6 +13,7 @@ export class AuthGuardService implements CanActivate {
   async canActivate(route: ActivatedRouteSnapshot) {
     if (!await this.authService.checkAuthenticated()) {
       let desiredUrl = route.routeConfig.path;      
+      console.log(desiredUrl)
       this.authService.setRedirectUrl(desiredUrl)
       await this.router.navigate(['login']);
       this.snackbar.open("You need to be logged in to use this functionality. Please login.", "", {

@@ -1,35 +1,92 @@
 <div class="container">
   <div class="row">
-    <div class="col-sm">
-      <mat-card>
-        <mat-card-content>
-          <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <h1 class="mat-display-1">Log In</h1>
-            <mat-error *ngIf="loginInvalid">
-              The username and password were not recognised
-            </mat-error>
-            <h2>
-              <mat-form-field>
-                <input matInput placeholder="Email" formControlName="username" required>
-                <mat-error>
-                  Please provide a valid email address
-                </mat-error>
-              </mat-form-field>
-            </h2>
-            <h2>
-              <mat-form-field class="full-width-input">
-                <input matInput type="password" placeholder="Password" formControlName="password" required>
-                <mat-error>
-                  Please provide a valid password
-                </mat-error>
-              </mat-form-field>
-            </h2>
+    <div class="col-md-6 mx-auto my-5">
+        <section class="form-elegant">
+            <div *ngIf="login">
+                <mdb-card>
+                    <mdb-card-header class="info-color white-text text-center py-4">
+                           <h1>Login</h1> 
+                       
+                    </mdb-card-header>
+                    <mdb-card-body class="mx-4">
+                      <form class="pb-2" [formGroup]="form" (ngSubmit)="onSubmit()">
+                        <mat-error *ngIf="loginInvalid">
+                          The username and password were not recognised
+                        </mat-error>
+                          <mat-form-field>
+                            <input matInput placeholder="Email" formControlName="username" required>
+                            <mat-error>
+                              Please provide a valid email address
+                            </mat-error>
+                          </mat-form-field>
+                          <mat-form-field class="full-width-input">
+                            <input matInput type="password" placeholder="Password" formControlName="password" required>
+                            <mat-error>
+                              Please provide a valid password
+                            </mat-error>
+                          </mat-form-field>
+                      </form>
 
-            <button mat-raised-button color="primary">Login</button>
-          </form>
-        </mat-card-content>
-      </mat-card>
+                        <!--Body-->
+
+                        <div class="text-center mb-3">
+                            <button (window:keypress)="doLoginEnter($event)" (click)="onSubmit()" [disabled]="!form.valid" type="button" mdbBtn gradient="blue" block="true" rounded="true"
+                                class="z-depth-1a waves-light" mdbWavesEffect>Login</button>
+                        </div>
+
+                    </mdb-card-body>
+                    <!--Footer-->
+                    <div class="modal-footer mx-5 pt-3 mb-1">
+                        <p class="font-small grey-text d-flex justify-content-end">You do not have an account?
+                            <a class="blue-text ml-1" (click)="openRegisterForm()"> Register</a>
+                        </p>
+                    </div>
+                </mdb-card>
+            </div>
+
+            <div *ngIf="!login">
+                <mdb-card>
+                    <mdb-card-header class="info-color white-text text-center py-4">
+                      <h1>Registration</h1> 
+                    </mdb-card-header>
+                    <mdb-card-body class="mx-4">
+                      <form class="pb-2" [formGroup]="registerForm"  (ngSubmit)="onSubmit()">
+                        <mat-error *ngIf="loginInvalid">
+                          The username and password were not recognised
+                        </mat-error>
+                          <mat-form-field>
+                            <input matInput placeholder="Email" formControlName="username" required>
+                            <mat-error>
+                              Please provide a valid email address
+                            </mat-error>
+                          </mat-form-field>
+                          <mat-form-field class="full-width-input">
+                            <input matInput type="password" placeholder="Password" formControlName="password" required>
+                            <mat-error>
+                              Please provide a valid password
+                            </mat-error>
+                          </mat-form-field>
+                      </form>
+                        <!--Body-->
+
+                        <div class="text-center mb-3">
+                            <button (window:keypress)="doRegisterEnter($event)" [disabled]="!registerForm.valid" mdbBtn gradient="blue" block="true" rounded="true"
+                                class="z-depth-1a waves-light" (click)="doRegister()" mdbWavesEffect>Register</button>
+                        </div>
+
+                    </mdb-card-body>
+                    <!--Footer-->
+                    <div class="modal-footer mx-5 pt-3 mb-1">
+                        <p class="font-small grey-text d-flex justify-content-end">You already have an account?
+                            <a class="blue-text ml-1" (click)="openLoginForm()"> Sign In</a>
+                        </p>
+                    </div>
+                </mdb-card>
+            </div>
+
+
+        </section>
     </div>
-  </div>
+</div>
 
 </div>
