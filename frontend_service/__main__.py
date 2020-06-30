@@ -12,6 +12,7 @@ from bson.json_util import dumps
 
 from .auth import SignupApi, LoginApi
 from .db import initialize_db
+from .errors import errors
 
 import re
 
@@ -21,7 +22,7 @@ MONGO_IP = "localhost"
 MONGO_PORT = 27017
 MONGO_USER = "root"
 MONGO_PW = "rootpassword"
-MONGO_DB_DATA = "smart_cities"
+MONGO_DB_APP = "smart_cities"
 MONGO_DB_AUTH = "auth"
 MONGO_COLLECTION = "mqtt"
 MONGO_TIMEOUT = 1000  # Time in ms
@@ -36,14 +37,26 @@ class ConfigClass(object):
     SECRET_KEY = 'This is an INSECURE secret!! DO NOT use this in production!!'
 
     # Flask-MongoEngine settings
-    MONGODB_SETTINGS = {
-        'db': MONGO_DB_AUTH,
-        'host': "localhost",
-        'port': 27017,
-        'username': "root",
-        'password': "rootpassword",
-        "authentication_source": "admin"
-    }
+    MONGODB_SETTINGS = [
+        {
+            'alias': 'auth',
+            'db': MONGO_DB_AUTH,
+            'host': "localhost",
+            'port': 27017,
+            'username': "root",
+            'password': "rootpassword",
+            "authentication_source": "admin"
+        },
+        {
+            'alias': 'app',
+            'db': MONGO_DB_APP,
+            'host': "localhost",
+            'port': 27017,
+            'username': "root",
+            'password': "rootpassword",
+            "authentication_source": "admin"
+        }
+    ]
 
      # Flask-User settings
     USER_APP_NAME = "Flask-User MongoDB App"      # Shown in and email templates and page footers
@@ -66,7 +79,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(__name__+'.ConfigClass')
     app.config.from_envvar('ENV_FILE_LOCATION')
-    api = Api(app)
+    api = Api(app, errors=errors)
     jwt = JWTManager(app)
 
     initialize_db(app)
@@ -80,7 +93,7 @@ app = create_app()
 
 print("Connecting Mongo")
 client = MongoClient(f"mongodb://{MONGO_USER}:{MONGO_PW}@{MONGO_IP}:{MONGO_PORT}", serverSelectionTimeoutMS=MONGO_TIMEOUT)
-database = client.get_database(MONGO_DB_DATA)
+database = client.get_database(MONGO_DB_APP)
 collection = database.get_collection(MONGO_COLLECTION)
 
 @app.route('/')
