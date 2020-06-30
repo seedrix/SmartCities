@@ -1,22 +1,11 @@
 from flask import Response, request
 from flask_restful import Resource
-from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 import datetime
 from mongoengine.errors import FieldDoesNotExist, NotUniqueError, DoesNotExist
 from .errors import SchemaValidationError, EmailAlreadyExistsError, UnauthorizedError, InternalServerError
-from .db import db
+from .db_models import User, UserShops
 
-class User(db.Document):
-    meta = {'db_alias': 'auth', 'collection': 'users'}
-    email = db.EmailField(required=True, unique=True)
-    password = db.StringField(required=True, min_length=6)
-
-    def hash_password(self):
-        self.password = generate_password_hash(self.password).decode('utf8')
-
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
 
 class SignupApi(Resource):
     def post(self):
@@ -26,6 +15,8 @@ class SignupApi(Resource):
             user.hash_password()
             user.save()
             id = user.id
+            user_shops = UserShops(**{"user_id": str(id), "shops": [], "next_shop": ""})
+            user_shops.save()
             return {'id': str(id)}, 200
         except FieldDoesNotExist:
             raise SchemaValidationError
