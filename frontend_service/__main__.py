@@ -20,7 +20,8 @@ MONGO_IP = "localhost"
 MONGO_PORT = 27017
 MONGO_USER = "root"
 MONGO_PW = "rootpassword"
-MONGO_DB = "smart_cities"
+MONGO_DB_DATA = "smart_cities"
+MONGO_DB_AUTH = "auth"
 MONGO_COLLECTION = "mqtt"
 MONGO_TIMEOUT = 1000  # Time in ms
 
@@ -35,8 +36,12 @@ class ConfigClass(object):
 
     # Flask-MongoEngine settings
     MONGODB_SETTINGS = {
-        'db': MONGO_DB,
-        'host': f'mongodb://{MONGO_USER}:{MONGO_PW}@{MONGO_IP}:{MONGO_PORT}/?authSource=admin'
+        'db': MONGO_DB_AUTH,
+        'host': "localhost",
+        'port': 27017,
+        'username': "root",
+        'password': "rootpassword",
+        "authentication_source": "admin"
     }
 
      # Flask-User settings
@@ -71,7 +76,7 @@ app = create_app()
 
 print("Connecting Mongo")
 client = MongoClient(f"mongodb://{MONGO_USER}:{MONGO_PW}@{MONGO_IP}:{MONGO_PORT}", serverSelectionTimeoutMS=MONGO_TIMEOUT)
-database = client.get_database(MONGO_DB)
+database = client.get_database(MONGO_DB_DATA)
 collection = database.get_collection(MONGO_COLLECTION)
 
 @app.route('/')
