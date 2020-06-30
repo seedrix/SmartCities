@@ -4,12 +4,13 @@ from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_restful import Api
+from flask_jwt_extended import JWTManager, jwt_required
 
 
 from pymongo import MongoClient
 from bson.json_util import dumps
 
-from .auth import SignupApi
+from .auth import SignupApi, LoginApi
 from .db import initialize_db
 
 import re
@@ -54,6 +55,7 @@ class ConfigClass(object):
 
 def initialize_routes(api):
     api.add_resource(SignupApi, '/auth/signup')
+    api.add_resource(LoginApi, '/auth/login')
 
 
 
@@ -63,7 +65,9 @@ def create_app():
     # Setup Flask and load app.config
     app = Flask(__name__)
     app.config.from_object(__name__+'.ConfigClass')
+    app.config.from_envvar('ENV_FILE_LOCATION')
     api = Api(app)
+    jwt = JWTManager(app)
 
     initialize_db(app)
 
