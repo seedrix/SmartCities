@@ -1,15 +1,20 @@
 from flask import Flask
 from flask import request, Response
 from flask_cors import CORS
+from flask_mongoengine import MongoEngine
+from flask_bcrypt import generate_password_hash, check_password_hash
+from flask_restful import Api
+
 
 from pymongo import MongoClient
 from bson.json_util import dumps
 
+from .auth import SignupApi
+from .db import initialize_db
+
 import re
 
 
-app = Flask(__name__)
-CORS(app)
 
 MONGO_IP = "localhost"
 MONGO_PORT = 27017
@@ -19,11 +24,55 @@ MONGO_DB = "smart_cities"
 MONGO_COLLECTION = "mqtt"
 MONGO_TIMEOUT = 1000  # Time in ms
 
+
+
+# Class-based application configuration
+class ConfigClass(object):
+    """ Flask application config """
+
+    # Flask settings
+    SECRET_KEY = 'This is an INSECURE secret!! DO NOT use this in production!!'
+
+    # Flask-MongoEngine settings
+    MONGODB_SETTINGS = {
+        'db': MONGO_DB,
+        'host': f'mongodb://{MONGO_USER}:{MONGO_PW}@{MONGO_IP}:{MONGO_PORT}/?authSource=admin'
+    }
+
+     # Flask-User settings
+    USER_APP_NAME = "Flask-User MongoDB App"      # Shown in and email templates and page footers
+    USER_ENABLE_EMAIL = False      # Disable email authentication
+    USER_ENABLE_USERNAME = True    # Enable username authentication
+    USER_REQUIRE_RETYPE_PASSWORD = False    # Simplify register form
+
+
+
+def initialize_routes(api):
+    api.add_resource(SignupApi, '/auth/signup')
+
+
+
+def create_app():
+    """ Flask application factory """
+    
+    # Setup Flask and load app.config
+    app = Flask(__name__)
+    app.config.from_object(__name__+'.ConfigClass')
+    api = Api(app)
+
+    initialize_db(app)
+
+    initialize_routes(api)
+
+    CORS(app)
+    return app
+
+app = create_app()
+
 print("Connecting Mongo")
 client = MongoClient(f"mongodb://{MONGO_USER}:{MONGO_PW}@{MONGO_IP}:{MONGO_PORT}", serverSelectionTimeoutMS=MONGO_TIMEOUT)
 database = client.get_database(MONGO_DB)
 collection = database.get_collection(MONGO_COLLECTION)
-
 
 @app.route('/')
 def index():
