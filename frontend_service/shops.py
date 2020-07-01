@@ -53,12 +53,28 @@ class AllShopsApi(Resource):
         except Exception as e:
             raise InternalServerError
 
-class ShopPeopleApi(Resource):
+class ShopCurrentPeopleDataApi(Resource):
     def get(self, shop_id):
         if Shop.objects(shop_id=shop_id).count() == 0:
             raise ResourceDoesNotExist
-        doc = get_newest_topic_data(f"^de/smartcity/2020/mymall/shops/{shop_id}/people/count")
-        return Response(dumps(doc["payload"]), mimetype="application/json", status=200)
+        try:
+            docs = get_newest_topic_data(f"^de/smartcity/2020/mymall/shops/{shop_id}/people/count")
+        except Exception as e:
+            raise InternalServerError
+        if len(docs) == 0:
+            raise ResourceDoesNotExist
+        return Response(dumps(filter_mqtt_data(docs[0])), mimetype="application/json", status=200)
+
+class ShopHistoricalPeopleDataApi(Resource):
+    def get(self, shop_id, timestamp):
+        if Shop.objects(shop_id=shop_id).count() == 0:
+            raise ResourceDoesNotExist
+        try:
+            data = MqttData.objects(topic=f"de/smartcity/2020/mymall/shops/{shop_id}/people/count", timestamp__gte=timestamp).all()
+        except Exception as e:
+            raise InternalServerError
+        filtered_data = [filter_mqtt_data(mqtt_data) for mqtt_data in data]
+        return Response(dumps(filtered_data), mimetype="application/json", status=200)
 
 
 def get_newest_topic_data(topic_regex):
@@ -73,5 +89,8 @@ def get_newest_topic_data(topic_regex):
                 "newRoot": "$topic"
             }}
         ]
+    return list(MqttData.objects().aggregate(pipline))
 
-    return list(MqttData.objects().aggregate(pipline))[0]
+def filter_mqtt_data(mqtt_data):
+    relevant_keys = ["payload", "timestamp", "datetime"]
+    return { key: mqtt_data[key] for key in relevant_keys }
