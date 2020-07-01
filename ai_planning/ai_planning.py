@@ -101,7 +101,7 @@ class PlanningInstance():
         )"""
 
         for (i, cap) in enumerate(self.cap_at_shop):
-            problem += "(and (<= (people-at-shop shop" + str(i) + ") " + str(cap) + "))\n"
+            problem += "(and (<= (people-at-shop shop" + str(i) + ") " + str(cap + run_number) + "))\n"
 
         # (forall (?s - shop)
         #     (<= (people-at-shop ?s) """ + str(current_cap) + """)
