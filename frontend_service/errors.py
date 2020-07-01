@@ -12,13 +12,16 @@ class EmailAlreadyExistsError(HTTPException):
 class UnauthorizedError(HTTPException):
     pass
 
+class NoJsonError(HTTPException):
+    pass
+
 errors = {
     "InternalServerError": {
         "message": "Something went wrong",
         "status": 500
     },
      "SchemaValidationError": {
-         "message": "Request is missing required fields",
+         "message": "Request does not fulfill the expected schema",
          "status": 400
      },
      "EmailAlreadyExistsError": {
@@ -28,5 +31,9 @@ errors = {
      "UnauthorizedError": {
          "message": "Invalid username or password",
          "status": 401
+     },
+     "NoJsonError": {
+         "message": "Request body must be JSON",
+         "status": 400
      }
 }

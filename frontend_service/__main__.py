@@ -11,7 +11,7 @@ from pymongo import MongoClient
 from bson.json_util import dumps
 
 from .auth import SignupApi, LoginApi
-from .user_shops import UserShopsAPI
+from .user_shops import ShopListApi, NextShopApi
 from .db import initialize_db
 from .errors import errors
 
@@ -70,7 +70,8 @@ class ConfigClass(object):
 def initialize_routes(api):
     api.add_resource(SignupApi, '/auth/signup')
     api.add_resource(LoginApi, '/auth/login')
-    api.add_resource(UserShopsAPI, '/user/shops')
+    api.add_resource(ShopListApi, '/user/shops')
+    api.add_resource(NextShopApi, '/user/next_shop')
 
 
 
