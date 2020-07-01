@@ -11,6 +11,7 @@ export class AuthGuardService implements CanActivate {
   constructor(public authService: AuthService, public router: Router, private snackbar: MatSnackBar) {}
 
   async canActivate(route: ActivatedRouteSnapshot) {
+    return true;
     if (!await this.authService.checkAuthenticated()) {
       let desiredUrl = route.routeConfig.path;      
       console.log(desiredUrl)

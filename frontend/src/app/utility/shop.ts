@@ -5,15 +5,16 @@ export class Shop {
     isStop: boolean;
     waitingTime: number;
 
-    constructor(name: string, people: number, maxPeople: number) {
+    
+
+    constructor(name: string, maxPeople: number) {
         this.name = name;
-        this.people = people;
         this.maxPeople = maxPeople;
 
-        if (this.people >= this.maxPeople) {
-            this.isStop = true
-        } else {
-            this.isStop = false
-        }
+        // if (this.people >= this.maxPeople) {
+        //     this.isStop = true
+        // } else {
+        //     this.isStop = false
+        // }
     }
 }

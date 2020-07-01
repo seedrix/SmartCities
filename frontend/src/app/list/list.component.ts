@@ -18,4 +18,8 @@ export class ListComponent implements OnInit {
     this.navbar.showNavbar()
   }
 
+  sendShopList() {
+    this.shops.setSelection([])
+  }
+
 }

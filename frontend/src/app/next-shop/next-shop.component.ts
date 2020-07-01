@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ShopsService } from '../services/shops.service';
 
 @Component({
   selector: 'app-next-shop',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NextShopComponent implements OnInit {
 
-  constructor() { }
+  constructor(public shops: ShopsService) { }
 
   ngOnInit(): void {
+  }
+
+  shopVisited() {
+    
   }
 
 }

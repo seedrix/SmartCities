@@ -2,10 +2,18 @@
     <div class="row">
         <div class="col">
             <h3 class="mat-display-1 text-center">Next Shop</h3>
-            <div class="text-center">
+
+            <div class="text-center" *ngIf=!shops.shopsSelected>
                 Select shops in order to get a recommendation for your next shop.
             </div>
-            
+
+        </div>
+    </div>
+    <div class="row" *ngIf=shops.shopsSelected>
+        <div class="col text-center">
+            <button class="w-50" color="primary" mat-stroked-button (click)="shopVisited()">
+                Shop visited.
+            </button>
         </div>
     </div>
 </div>
