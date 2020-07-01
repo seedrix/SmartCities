@@ -1,46 +1,27 @@
 from werkzeug.exceptions import HTTPException
 
 class InternalServerError(HTTPException):
-    pass
+    code = 500
+    description = "Something went wrong"
 
 class SchemaValidationError(HTTPException):
-    pass
+    code = 400
+    desciption = "Request does not fulfill the expected schema"
 
 class EmailAlreadyExistsError(HTTPException):
-    pass
+    code = 400
+    description = "User with given email address already exists"
 
 class UnauthorizedError(HTTPException):
-    pass
+    code = 401
+    description = "User with given email address already exists"
 
 class NoJsonError(HTTPException):
-    pass
+    code = 400
+    description =  "Request body must be JSON"
 
 class ResourceDoesNotExist(HTTPException):
-    pass
+    code = 404
+    description = "The requested resource does not exist"
 
-errors = {
-    "InternalServerError": {
-        "message": "Something went wrong",
-        "status": 500
-    },
-     "SchemaValidationError": {
-         "message": "Request does not fulfill the expected schema",
-         "status": 400
-     },
-     "EmailAlreadyExistsError": {
-         "message": "User with given email address already exists",
-         "status": 400
-     },
-     "UnauthorizedError": {
-         "message": "Invalid username or password",
-         "status": 401
-     },
-     "NoJsonError": {
-         "message": "Request body must be JSON",
-         "status": 400
-     },
-     "ResourceDoesNotExist": {
-         "message": "The requested resource does not exist",
-         "status": 404
-     }
-}
+errors = {}
