@@ -10,6 +10,7 @@ import time
 scheduling_interval_seconds = 30
 
 class DB_Handler_Ai:
+    # Todo: implement
     people_topic_regex = re.compile("^de/smartcity/2020/mymall/shops/[^/]+/people/count")
 
     def __init__(self, offline_test=False):
@@ -17,7 +18,7 @@ class DB_Handler_Ai:
         if offline_test:
             print("Offline test mode, no database connection will be used!")
             return
-        MONGO_IP = "t1.max-reichel.de"
+        MONGO_IP = "localhost"
         MONGO_PORT = 27017
         MONGO_USER = "root"
         MONGO_PW = "rootpassword"
@@ -125,14 +126,22 @@ class SolverIOMapper:
 
         self.users_mapping = dict()
         self.users_preferences = list()
-        for user_idx, user_info in enumerate(self.users_info):
+        user_idx = 0
+        for user_info in self.users_info:
+            if len(user_info['shops']) == 0:
+                continue
             self.users_mapping['LIST'+str(user_idx)] = user_info[__class__.user_id_key]
             for shop_id in user_info['shops']:
+                if shop_id not in shop_to_index:
+                    print("User references unknown shops")
+                    continue
                 self.users_preferences.append((user_idx, shop_to_index[shop_id]))
+            user_idx += 1
+        self.number_of_users = user_idx
 
     def get_planning_instance(self, name):
         # Todo: Use information from self.max_people_per_shop ?
-        return PlanningInstance(name, len(self.shops_info), len(self.users_info), self.people_at_shop, self.users_preferences)
+        return PlanningInstance(name, len(self.shops_info), self.number_of_users, self.people_at_shop, self.users_preferences, self.max_people_per_shop)
 
     def map_result(self, result):
         assert isinstance(result, list)
