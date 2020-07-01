@@ -60,15 +60,17 @@ class Solver():
 
 
 class PlanningInstance():
-    def __init__(self, name, number_of_shops, number_of_lists, people_at_shop: [int], shop_options: [(int, int)]):
+    def __init__(self, name, number_of_shops, number_of_lists, people_at_shop: [int], shop_options: [(int, int)], cap_at_shop: [int]):
         self.number_of_shops = number_of_shops
         self.number_of_lists = number_of_lists
         self.name = name
         self.people_at_shop = people_at_shop
         self.shop_options = shop_options
+        self.cap_at_shop = cap_at_shop
         if len(people_at_shop) != number_of_shops:
             print("number of shops and len(people at shop) must be equal")
             return
+        
 
     def to_problem_string(self, run_number = 0) -> str:
         problem = "(define (problem " + self.name + ")\n"
@@ -96,15 +98,22 @@ class PlanningInstance():
         problem += """(:goal            
         (and (forall (?l - list)
             (list-set ?l)
-        )
-        (forall (?s - shop)
-            (<= (people-at-shop ?s) """ + str(current_cap) + """)
-        )
+        )"""
+
+        for (i, cap) in enumerate(self.cap_at_shop):
+            problem += "(and (<= (people-at-shop shop" + str(i) + ") " + str(cap) + "))\n"
+
+        # (forall (?s - shop)
+        #     (<= (people-at-shop ?s) """ + str(current_cap) + """)
+        # )
+
+        problem += """
                     
         )
         )
         )
         """
+        print(problem)
         return problem
 
     def _compute_average(self) -> int:
@@ -122,11 +131,12 @@ if __name__ == "__main__":
     number_of_shops = 3
     number_of_lists = 5
     people_at_shop = [0 for i in range(number_of_shops)]
+    cap_at_shop = [1,2,3]
     shop_options = []
     for i in range(number_of_lists):
         # shop_options.append((i, 0))
         shop_options.append((i, 1))
         shop_options.append((i, 2))
-    planning_instance = PlanningInstance("week2", number_of_shops, number_of_lists, people_at_shop, shop_options)
+    planning_instance = PlanningInstance("week2", number_of_shops, number_of_lists, people_at_shop, shop_options, cap_at_shop)
     result = solver.solve(planning_instance)
     print(result)

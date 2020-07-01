@@ -19,10 +19,10 @@ list0 list1 list2 list3 list4 - list)
 (:goal            
         (and (forall (?l - list)
             (list-set ?l)
-        )
-        (forall (?s - shop)
-            (<= (people-at-shop ?s) 3)
-        )
+        )(and (<= (people-at-shop shop0) 1))
+(and (<= (people-at-shop shop1) 2))
+(and (<= (people-at-shop shop2) 3))
+
                     
         )
         )
