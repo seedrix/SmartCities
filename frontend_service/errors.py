@@ -15,6 +15,9 @@ class UnauthorizedError(HTTPException):
 class NoJsonError(HTTPException):
     pass
 
+class ResourceDoesNotExist(HTTPException):
+    pass
+
 errors = {
     "InternalServerError": {
         "message": "Something went wrong",
@@ -35,5 +38,9 @@ errors = {
      "NoJsonError": {
          "message": "Request body must be JSON",
          "status": 400
+     },
+     "ResourceDoesNotExist": {
+         "message": "The requested resource does not exist",
+         "status": 404
      }
 }

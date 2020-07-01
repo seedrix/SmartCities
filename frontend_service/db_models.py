@@ -16,4 +16,12 @@ class UserShops(db.Document):
     meta = {'db_alias': 'app', 'collection': 'users'}
     user_id = db.StringField(required=True, unique=True)
     shops = db.ListField(db.StringField())
-    next_shop = db.StringField()    
+    next_shop = db.StringField()
+
+class Shop(db.Document):
+    meta = {'db_alias': 'app', 'collection': 'shops'}
+    shop_id = db.StringField(required=True, unique=True)
+    max_people = db.IntField(required=True)
+    sensors = db.ListField(db.StringField())
+    shop_name = db.StringField()
+    logo = db.StringField()
