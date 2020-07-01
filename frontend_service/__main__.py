@@ -12,7 +12,7 @@ from bson.json_util import dumps
 
 from .auth import SignupApi, LoginApi
 from .user_shops import ShopListApi, NextShopApi
-from .shops import ShopApi, AllShopsApi
+from .shops import ShopApi, AllShopsApi, ShopPeopleApi
 from .db import initialize_db
 from .errors import errors
 
@@ -73,8 +73,9 @@ def initialize_routes(api):
     api.add_resource(LoginApi, '/auth/login')
     api.add_resource(ShopListApi, '/user/shops')
     api.add_resource(NextShopApi, '/user/next_shop')
-    api.add_resource(AllShopsApi, '/shops')
-    api.add_resource(ShopApi, '/shops/<string:shop_id>')
+    api.add_resource(AllShopsApi, '/shops/all')
+    api.add_resource(ShopApi, '/shops/shop/<string:shop_id>')
+    api.add_resource(ShopPeopleApi, '/shops/people/<string:shop_id>')
 
 
 

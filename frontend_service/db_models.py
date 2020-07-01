@@ -25,3 +25,11 @@ class Shop(db.Document):
     sensors = db.ListField(db.StringField())
     shop_name = db.StringField()
     logo = db.StringField()
+
+class MqttData(db.Document):
+    meta = {'db_alias': 'app', 'collection': 'mqtt'}
+    topic = db.StringField(required=True)
+    payload = db.DynamicField()
+    qos = db.IntField(required=True)
+    timestamp = db.IntField(required=True)
+    datetime = db.StringField()
