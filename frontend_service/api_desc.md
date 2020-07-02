@@ -61,6 +61,7 @@ example body:
 ## /auth/signup
 ### post
 register a new user
+
 example body:
 ```
 {
@@ -71,6 +72,7 @@ example body:
 
 ## /auth/login
 log in a registered user
+
 example body:
 ```
 {
