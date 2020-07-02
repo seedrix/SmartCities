@@ -79,10 +79,12 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  doRegister() {
+  async doRegister() {
+    await this.authService.register(this.registerForm.get("username").value, this.registerForm.get("password").value)
   }
 
-  doLogin() {
+  async doLogin() {
+    await this.authService.login(this.form.get("username").value, this.form.get("password").value)
   }
 
   loggedIn() {

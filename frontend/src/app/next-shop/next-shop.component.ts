@@ -11,6 +11,10 @@ export class NextShopComponent implements OnInit {
   constructor(public shops: ShopsService) { }
 
   ngOnInit(): void {
+    if (this.shops.shopsSelected) {
+      this.shops.getNextShop();
+    }
+    
   }
 
   shopVisited() {
