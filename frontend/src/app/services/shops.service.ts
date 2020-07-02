@@ -18,24 +18,32 @@ export class ShopsService {
 
 
   shopsSelected = false
-  selection: Shop[];
   nextShop: Shop;
 
-  public shop_list: { [name: string]: Shop } = {};
+  public shop_list: { [shop_id: string]: Shop } = {};
 
 
   constructor(private http: HttpClient, private snackbar: MatSnackBar, private authService: AuthService) {
-    this.http.get(this.shopsAllUrl).subscribe((values: [any]) => {
-      values.forEach(shop => {
-        this.shop_list[shop.shop_name] = new Shop(shop.shop_name, shop.shop_id, shop.max_people)
+    this.getShops()
+
+  }
+
+  async getShops() {
+    try {
+      const response: any = await this.http.get(this.shopsAllUrl).toPromise();
+      response.forEach(shop => {
+        this.shop_list[shop.shop_id] = new Shop(shop.shop_name, shop.shop_id, shop.max_people, shop.image);
         console.log(shop)
+        
       });
-    }, error => {
+
+    } catch (error) {
+      console.log("Error Status: " + error.status)
       console.log(error)
-    });
-
-
-
+      this.snackbar.open("Could not reach the backend server.", "", {
+        duration: 2000,
+      });
+    }
   }
 
   async setSelection(shops: Shop[]) {
@@ -44,7 +52,6 @@ export class ShopsService {
     try {
       const response = await this.http.post(this.postShopsUrl, json, httpOptions).toPromise();
       this.shopsSelected = true
-      this.selection = shops
       this.snackbar.open("Shop list saved.", "", {
         duration: 4000,
       });
@@ -62,8 +69,19 @@ export class ShopsService {
   async getShopList() {
     const httpOptions = this.createHttpGetOptions();
     try {
-      const response = await this.http.get(this.getShopListUrl, httpOptions).toPromise();
-      console.log(response)
+      const response: any = await this.http.get(this.getShopListUrl, httpOptions).toPromise();
+      let shops = []
+      response.forEach(shop_id => {
+        shops.push(this.shop_list[shop_id])
+      });
+
+      if (shops.length > 0) {
+        this.shopsSelected = true
+      }
+
+      return response;
+
+
     } catch (error) {
       console.log("Error Status: " + error.status)
       console.log(error)
@@ -98,12 +116,13 @@ export class ShopsService {
   }
 
   async getNextShop() {
+    const httpOptions = this.createHttpGetOptions();
     try {
-      const response = await this.http.get(this.nextShopUrl).toPromise();
-
-      console.log(response)
+      const response: any = await this.http.get(this.nextShopUrl, httpOptions).toPromise();
+      return this.shop_list[response];
     } catch (error) {
       console.log("Error Status: " + error.status)
+      console.log(error)
       this.snackbar.open("Could not reach the backend server.", "", {
         duration: 2000,
       });
@@ -111,13 +130,13 @@ export class ShopsService {
   }
 
 
-  testShopList() {
-    this.shop_list = {
-      "Adidas": new Shop("Adidas", "1", 5),
-      "Netto": new Shop("Netto", "2", 10),
-      "Modepark": new Shop("Modepark", "3", 5),
-      "H&M": new Shop("H&M", "4", 8),
-      "Drogerie": new Shop("Drogerie", "5", 10)
-    }
-  }
+  // testShopList() {
+  //   this.shop_list = {
+  //     "Adidas": new Shop("Adidas", "1", 4),
+  //     "Netto": new Shop("Netto", "2", 10),
+  //     "Modepark": new Shop("Modepark", "3", 5),
+  //     "H&M": new Shop("H&M", "4", 8),
+  //     "Drogerie": new Shop("Drogerie", "5", 10)
+  //   }
+  // }
 }

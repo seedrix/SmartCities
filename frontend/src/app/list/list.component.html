@@ -8,11 +8,11 @@
     <div class="row">
         <div class="col">
             <mat-selection-list #list [(ngModel)]="selectedShops">
-                <mat-list-option *ngFor="let shop of shops.shop_list | keyvalue" [value]="shop.value">
-                    {{shop.key}}
+                <mat-list-option *ngFor="let shop of shops.shop_list | keyvalue" [value]="shop.value.shop_id">
+                    {{shop.value.name}}
                 </mat-list-option>
             </mat-selection-list>
-        </div>
+        </div>        
     </div>
 
     <div class="row">

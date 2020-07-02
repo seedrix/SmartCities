@@ -9,8 +9,16 @@
 
         </div>
     </div>
-    <div class="row" *ngIf=shops.shopsSelected>
-        <div class="col text-center">
+    
+    <img #logo>
+    <div class="row pb-2" *ngIf="shops.shopsSelected && nextShop">
+        <div class="col text-center">            
+            {{nextShop.name}}
+        </div>
+    </div>
+
+    <div class="row" *ngIf="shops.shopsSelected">
+        <div class="col text-center">            
             <button class="w-50" color="primary" mat-stroked-button (click)="shopVisited()">
                 Shop visited.
             </button>

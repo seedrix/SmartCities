@@ -13,9 +13,12 @@ export class ListComponent implements OnInit {
 
   constructor(public shops: ShopsService, private navbar: NavbarService) { }
 
-  ngOnInit(): void {
-    let shopList = this.shops.getShopList()
-    console.log(shopList)
+  async ngOnInit() {
+    let shopList = await this.shops.getShopList()
+    if (shopList) {
+      console.log(shopList)
+      this.selectedShops = shopList
+    }
   }
 
   ngAfterContentInit() {
@@ -23,12 +26,7 @@ export class ListComponent implements OnInit {
   }
 
   sendShopList() {
-    console.log(this.selectedShops)
-    let selectedIDs = []
-    this.selectedShops.forEach((shop: Shop) => {
-      selectedIDs.push(shop.shop_id)
-    });
-    this.shops.setSelection(selectedIDs)
+    this.shops.setSelection(this.selectedShops)
   }
 
 }

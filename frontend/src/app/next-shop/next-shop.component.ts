@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ShopsService } from '../services/shops.service';
+import { Shop } from '../utility/shop';
 
 @Component({
   selector: 'app-next-shop',
@@ -7,18 +8,19 @@ import { ShopsService } from '../services/shops.service';
   styleUrls: ['./next-shop.component.scss']
 })
 export class NextShopComponent implements OnInit {
+  nextShop: Shop;
 
   constructor(public shops: ShopsService) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     if (this.shops.shopsSelected) {
-      this.shops.getNextShop();
+      let nextShop = await this.shops.getNextShop();
+      this.nextShop = nextShop;
     }
-    
   }
 
   shopVisited() {
-    
+
   }
 
 }
