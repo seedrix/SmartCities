@@ -38,7 +38,7 @@ import { AuthService } from './services/auth.service';
 export class AppComponent {
   title = 'frontend';
   showAdmin = false
-  constructor(public shops: ShopsService, public navbar: NavbarService, private authService: AuthService) {
+  constructor(public shops: ShopsService, public navbar: NavbarService, public authService: AuthService) {
   }
 
   toggleAdmin() {

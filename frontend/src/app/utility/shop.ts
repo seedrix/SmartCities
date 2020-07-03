@@ -14,11 +14,5 @@ export class Shop {
         this.maxPeople = maxPeople;
         this.shop_id = shop_id;
         this.logo = logo;
-
-        // if (this.people >= this.maxPeople) {
-        //     this.isStop = true
-        // } else {
-        //     this.isStop = false
-        // }
     }
 }

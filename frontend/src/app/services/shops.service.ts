@@ -34,7 +34,7 @@ export class ShopsService {
     try {
       const response: any = await this.http.get(this.shopsAllUrl).toPromise();
       response.forEach(shop => {
-        this.shopMap[shop.shop_id] = new Shop(shop.shop_name, shop.shop_id, shop.max_people, shop.image);
+        this.shopMap[shop.shop_id] = new Shop(shop.shop_name, shop.shop_id, shop.max_people, shop.logo);
         console.log(shop)
         
       });
@@ -92,6 +92,33 @@ export class ShopsService {
         duration: 2000,
       });
     }
+  }
+
+  shopVisited() {
+    // TODO
+    // const httpOptions = this.createHttpGetOptions();
+    // try {
+    //   const response: any = await this.http.get(this.getShopListUrl, httpOptions).toPromise();
+    //   let shops = []
+    //   response.forEach(shop_id => {
+    //     shops.push(this.shopMap[shop_id])
+    //   });
+
+    //   if (shops.length > 0) {
+    //     this.shopsSelected = true
+    //   }
+
+    //   return response;
+
+
+    // } catch (error) {
+    //   console.log("Error Status: " + error.status)
+    //   console.log(error)
+    //   this.snackbar.open("Could not reach the backend server.", "", {
+    //     duration: 2000,
+    //   });
+    // }
+
   }
 
   createJSON(shops) {
