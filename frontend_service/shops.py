@@ -70,7 +70,20 @@ class ShopHistoricalPeopleDataApi(Resource):
         if Shop.objects(shop_id=shop_id).count() == 0:
             raise ResourceDoesNotExist
         try:
-            data = MqttData.objects(topic=f"de/smartcity/2020/mymall/shops/{shop_id}/people/count", timestamp__gte=timestamp).all()
+            intervall_seconds = 60*5
+            pipline = [{"$match": {"topic": "de/smartcity/2020/mymall/shops/"+shop_id+"/people/count", "timestamp": {"$gte": timestamp}}},
+                       {
+                '$group': {
+                    '_id': {
+                        'timestamp': {'$subtract': [{'$divide': ['$timestamp', intervall_seconds]}, {'$mod': [{'$divide': ['$timestamp', intervall_seconds]}, 1]}]}
+                    },
+                    'count': {'$avg': '$payload.count'},
+                    'timestamp': {'$first': '$timestamp'},
+                    'shop_id': {'$first': '$payload.shop_id'},
+                    'datetime': {'$first': '$datetime'}
+                }
+            }]
+            data = list(MqttData.objects().aggregate(pipline))
         except Exception as e:
             raise InternalServerError
         filtered_data = [filter_mqtt_data(mqtt_data) for mqtt_data in data]
@@ -92,5 +105,5 @@ def get_newest_topic_data(topic_regex):
     return list(MqttData.objects().aggregate(pipline))
 
 def filter_mqtt_data(mqtt_data):
-    relevant_keys = ["payload", "timestamp", "datetime"]
+    relevant_keys = ["count", "timestamp", "datetime", "shop_id"]
     return { key: mqtt_data[key] for key in relevant_keys }
