@@ -48,7 +48,6 @@ export class HistoryComponent implements OnInit {
       try {
         const response: any = await this.http.get(this.historyUrl + key + "/" + date).toPromise();
         console.log(response)
-        console.log(response)
 
         // this.chartDatasets.push({
         //   data: [65, 59, 80, 81, 56, 55, 40], 
@@ -70,10 +69,18 @@ export class HistoryComponent implements OnInit {
 
   private getDate() {
     let date = new Date()
+    // current day
     date.setHours(0)
     date.setMinutes(0)
     date.setSeconds(0)
-    console.log(date)
+    console.log(date)    
+    
+    // 2 weeks
+    date.setDate(date.getDate()-7);
+    date.setMinutes(0)
+    date.setSeconds(0)
+
+    
     let timestamp = Math.floor(+date / 1000)
     console.log(timestamp)
     return timestamp

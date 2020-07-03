@@ -1,17 +1,16 @@
 <div class="container">
     <div class="row">
-        <div class="col-lg-6" *ngFor="let shop of shops.shop_list | keyvalue">
-            <mat-card>
-                <mat-card-header>
-                    <mat-card-title>{{shop.key}}</mat-card-title>
-                    <mat-card-subtitle>{{shop.value.people}}</mat-card-subtitle>
-                  </mat-card-header>
-                  <!-- <mat-card-content>
-                    <p>                      
-                    </p>
-                  </mat-card-content> -->
-            </mat-card>
-
-        </div>
+        <div style="display: block">
+            <canvas mdbChart
+                chartType="bar"
+                [datasets]="chartDatasets"
+                [labels]="chartLabels"
+                [colors]="chartColors"
+                [options]="chartOptions"
+                [legend]="true"
+                (chartHover)="chartHovered($event)"
+                (chartClick)="chartClicked($event)">
+            </canvas>
+          </div>
     </div>
 </div>

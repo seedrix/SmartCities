@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: 'list', component: ListComponent, canActivate: [ AuthGuardService ]  },
   { path: 'next', component: NextShopComponent, canActivate: [ AuthGuardService ]  },
   { path: 'history', component: HistoryComponent, canActivate: [ AuthGuardService ]  },
-  { path: 'monitor', component: MonitorComponent, canActivate: [ AuthGuardService ]  },
+  { path: 'current', component: MonitorComponent, canActivate: [ AuthGuardService ]  },
 ];
 
 @NgModule({
