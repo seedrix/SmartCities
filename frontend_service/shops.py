@@ -7,6 +7,7 @@ from .db_models import Shop, MqttData
 from .errors import NoJsonError, SchemaValidationError, InternalServerError, ResourceDoesNotExist
 
 import re
+from datetime import datetime
 
 shop_schema = {
     "type": "object",
@@ -78,13 +79,14 @@ class ShopHistoricalPeopleDataApi(Resource):
                         'timestamp': {'$multiply': [{'$subtract': [{'$divide': ['$timestamp', intervall_seconds]}, {'$mod': [{'$divide': ['$timestamp', intervall_seconds]}, 1]}]}, intervall_seconds]}
                     },
                     'count': {'$avg': '$payload.count'},
+                    'timestamp': {'$first': '$timestamp'},
                     'shop_id': {'$first': '$payload.shop_id'},
                     'datetime': {'$first': '$datetime'}
                 }
             }, {'$project': {
                 '_id': 0,
                 'timestamp': '$_id.timestamp',
-                'datetime': 1,
+                'datetime': {'$dateToString': {'date': {'$add': [datetime.fromtimestamp(0), {"$multiply": ['$_id.timestamp', 1000]}]}, 'format':'%G-%m-%d %H:%M:%S'}},
                 'payload.count': '$count',
                 'payload.shop_id': '$shop_id'
             }
