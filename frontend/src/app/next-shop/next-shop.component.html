@@ -1,7 +1,7 @@
 <div class="container pt-4">
     <div class="row">
         <div class="col">
-            <h3 class="mat-display-1 text-center">Next Shop</h3>
+            <!-- <h1 class="mat-display-3 text-center">Next Shop</h1> -->
 
             <div class="text-center" *ngIf=!shops.shopsSelected>
                 Select shops in order to get a recommendation for your next shop.
@@ -10,18 +10,18 @@
         </div>
     </div>
     
-    <img #logo>
-    <div class="row pb-2" *ngIf="shops.shopsSelected && nextShop">
-        <div class="col text-center">            
-            {{nextShop.name}}
-        </div>
-    </div>
-
-    <div class="row" *ngIf="shops.shopsSelected">
-        <div class="col text-center">            
-            <button class="w-50" color="primary" mat-stroked-button (click)="shopVisited()">
-                Shop visited.
-            </button>
-        </div>
+    
+    <div class="row text-center" *ngIf="shops.shopsSelected && nextShop">
+        <mat-card class="w-50">
+            <mat-card-header class="text-center">
+              <mat-card-title class="text-center">{{nextShop.name}}</mat-card-title>
+            </mat-card-header>
+            <img mat-card-image [src]="logoSrc  | safeHtml">
+            <mat-card-actions>
+                <button class="w-100" color="primary" mat-stroked-button (click)="shopVisited()">
+                    Shop visited.
+                </button>
+            </mat-card-actions>
+          </mat-card>
     </div>
 </div>
