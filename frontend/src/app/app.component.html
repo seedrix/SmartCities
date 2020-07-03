@@ -30,19 +30,19 @@
 
       <a mat-list-item (click)="showNavbar()" [routerLink]="'/history'">
         <mat-icon>timeline</mat-icon> History
-      </a>
+      </a>      
 
-      <mat-divider></mat-divider>
-
-      <button mat-button class="w-100" (click)="toggleDisplays()" matSubheader>Displays </button>
-
-
-      <div [@showHideDisplays]="showDisplays ? 'open' : 'closed'">
-        <a (click)="hideNavbar()" *ngFor="let shop of shops.shop_list | keyvalue" mat-list-item
-          routerLink="/display/{{shop.key}}">
-          <mat-icon>tv</mat-icon> {{shop.key}}
-        </a>
+      <div *ngIf="authService.isAdmin">
+        <mat-divider></mat-divider>
+        <button mat-button class="w-100" (click)="toggleAdmin()" matSubheader>Sensor Data </button>
+        <div [@showHideAdmin]="showAdmin ? 'open' : 'closed'">
+          <a mat-list-item routerLink="/display/">
+            <mat-icon>tv</mat-icon> todo
+          </a>
+        </div>
       </div>
+
+
 
       <mat-divider></mat-divider>
 

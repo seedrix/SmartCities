@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Shop } from '../utility/shop';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from './auth.service';
@@ -20,7 +20,9 @@ export class ShopsService {
   shopsSelected = false
   nextShop: Shop;
 
-  public shop_list: { [shop_id: string]: Shop } = {};
+  public shopMap: { [shop_id: string]: Shop } = {};
+
+  shopsInit: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
 
   constructor(private http: HttpClient, private snackbar: MatSnackBar, private authService: AuthService) {
@@ -32,10 +34,11 @@ export class ShopsService {
     try {
       const response: any = await this.http.get(this.shopsAllUrl).toPromise();
       response.forEach(shop => {
-        this.shop_list[shop.shop_id] = new Shop(shop.shop_name, shop.shop_id, shop.max_people, shop.image);
+        this.shopMap[shop.shop_id] = new Shop(shop.shop_name, shop.shop_id, shop.max_people, shop.image);
         console.log(shop)
         
       });
+      this.shopsInit.next(true);
 
     } catch (error) {
       console.log("Error Status: " + error.status)
@@ -72,7 +75,7 @@ export class ShopsService {
       const response: any = await this.http.get(this.getShopListUrl, httpOptions).toPromise();
       let shops = []
       response.forEach(shop_id => {
-        shops.push(this.shop_list[shop_id])
+        shops.push(this.shopMap[shop_id])
       });
 
       if (shops.length > 0) {
@@ -119,7 +122,7 @@ export class ShopsService {
     const httpOptions = this.createHttpGetOptions();
     try {
       const response: any = await this.http.get(this.nextShopUrl, httpOptions).toPromise();
-      return this.shop_list[response];
+      return this.shopMap[response];
     } catch (error) {
       console.log("Error Status: " + error.status)
       console.log(error)

@@ -19,6 +19,7 @@ export class AuthService {
   };
 
   isLoggedIn = false
+  public isAdmin = false
   token: string
   redirectUrl: string = "/list";
 
@@ -44,13 +45,19 @@ export class AuthService {
       this.snackbar.open("Signed up successfully.", "", {
         duration: 4000,
       });
-      this.loginSuccessful(response)
+      this.loginSuccessful(response, username)
     } catch (error) {
       console.log("Error Status: " + error.status)
       if (error.status == 400) {
         this.snackbar.open("Account already exists.", "", {
           duration: 2000,
         });
+      }
+      else if (error.status == 401) {
+        this.snackbar.open("No account with the given credentials found.", "", {
+          duration: 2000,
+        });
+
       } else {
         this.snackbar.open("Could not reach the backend server.", "", {
           duration: 2000,
@@ -68,12 +75,16 @@ export class AuthService {
       this.snackbar.open("Logged in successfully.", "", {
         duration: 4000,
       });
-      this.loginSuccessful(response)
+      this.loginSuccessful(response, username)
 
     } catch (error) {
       console.log("Error Status: " + error.status)
       if (error.status == 400) {
         this.snackbar.open("Account already exists.", "", {
+          duration: 2000,
+        });
+      } else if (error.status == 401) {
+        this.snackbar.open("No account with the given credentials found.", "", {
           duration: 2000,
         });
       } else {
@@ -85,11 +96,14 @@ export class AuthService {
 
   }
 
-  loginSuccessful(response) {
+  loginSuccessful(response, username) {
     this.isLoggedIn = true;
     this.isAuthenticated.next(true);
     this.router.navigateByUrl("/" + this.redirectUrl)
     this.token = response.token
+    if (username === "admin@admin.de") {
+      this.isAdmin = true
+    }
     console.log(response)
 
   }
@@ -106,6 +120,7 @@ export class AuthService {
     try {
       // await this.authClient.signOut();
       this.isLoggedIn = false
+      this.isAdmin = false
       this.isAuthenticated.next(false);
       this.router.navigate([redirect]);
     } catch (err) {

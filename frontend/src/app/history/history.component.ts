@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ShopsService } from '../services/shops.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -7,12 +10,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./history.component.scss']
 })
 export class HistoryComponent implements OnInit {
-
-  ngOnInit(): void {
-    
-  }
-
-  public chartType: string = 'line';
+  historyUrl: string;
 
   public chartDatasets: Array<any> = [
     { data: [65, 59, 80, 81, 56, 55, 40], label: 'My First dataset' },
@@ -21,18 +19,72 @@ export class HistoryComponent implements OnInit {
 
   public chartLabels: Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
-  public chartColors: Array<any> = [
-    {
-      backgroundColor: 'rgba(105, 0, 132, .2)',
-      borderColor: 'rgba(200, 99, 132, .7)',
-      borderWidth: 2,
-    },
-    {
-      backgroundColor: 'rgba(0, 137, 132, .2)',
-      borderColor: 'rgba(0, 10, 130, .7)',
-      borderWidth: 2,
+  ngOnInit(): void {
+    
+  }
+
+  constructor(private http: HttpClient, private shops: ShopsService, private snackbar: MatSnackBar) {
+    this.historyUrl = this.shops.url + "shops/people/";
+
+    if (Object.keys(shops.shopMap).length != 0) {
+      this.getData()     
+    } else {
+      this.shops.shopsInit.subscribe(value => {
+        if (value) {
+          this.getData()
+        }
+      })
     }
-  ];
+    
+
+    
+  }
+
+  private async getData() {
+    // this.chartDatasets = []
+    let date = this.getDate()
+    for (let key in this.shops.shopMap) {
+      console.log(key)
+      try {
+        const response: any = await this.http.get(this.historyUrl + key + "/" + date).toPromise();
+        console.log(response)
+        console.log(response)
+
+        // this.chartDatasets.push({
+        //   data: [65, 59, 80, 81, 56, 55, 40], 
+        //   label: this.shops.shopMap[key].name,
+        // });
+  
+      } catch (error) {
+        console.log("Error Status: " + error.status)
+        console.log(error)
+        this.snackbar.open("Could not show values for shop: " + this.shops.shopMap[key].name, "", {
+          duration: 3000,
+        });
+      }
+    }
+
+    
+
+  }
+
+  private getDate() {
+    let date = new Date()
+    date.setHours(0)
+    date.setMinutes(0)
+    date.setSeconds(0)
+    console.log(date)
+    let timestamp = Math.floor(+date / 1000)
+    console.log(timestamp)
+    return timestamp
+
+  }
+  
+
+  public chartType: string = 'line';
+
+  
+
 
   public chartOptions: any = {
     responsive: true

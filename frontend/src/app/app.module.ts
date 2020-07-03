@@ -15,7 +15,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatCardModule } from '@angular/material/card';
-import { DisplayComponent } from './display/display.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoginComponent } from './login/login.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,7 +29,6 @@ import { NextShopComponent } from './next-shop/next-shop.component'
     AppComponent,
     ListComponent,
     MonitorComponent,
-    DisplayComponent,
     LoginComponent,
     HistoryComponent,
     NextShopComponent

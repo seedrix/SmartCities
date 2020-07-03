@@ -15,7 +15,7 @@ import { AuthService } from './services/auth.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   animations: [
-    trigger('showHideDisplays', [
+    trigger('showHideAdmin', [
       // ...
       state('open', style({
         height: '*',
@@ -37,24 +37,12 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
   title = 'frontend';
-  showDisplays = false
+  showAdmin = false
   constructor(public shops: ShopsService, public navbar: NavbarService, private authService: AuthService) {
   }
 
-  toggleDisplays() {
-    this.showDisplays = !this.showDisplays
-  }
-
-  hideNavbar() {
-    this.navbar.hideNavbar()
-  }
-
-  showNavbar() {
-    this.navbar.showNavbar();
-  }
-
-  hideNavbarCalled() {
-    console.log("hide")
+  toggleAdmin() {
+    this.showAdmin = !this.showAdmin
   }
 
   logout() {
