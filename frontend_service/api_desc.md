@@ -59,6 +59,8 @@ example body:
 
 ## /user/shops/{string:shop_id}
 ### delete
+requirement: bearer token
+
 deletes the requested shop from the user's shop list
 
 # Auth
