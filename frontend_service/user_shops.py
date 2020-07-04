@@ -13,7 +13,7 @@ shop_list_schema = {
     }
 }
 
-class ShopListApi(Resource):
+class UserShopListApi(Resource):
     @jwt_required
     def get(self):
         try:
@@ -41,7 +41,7 @@ class ShopListApi(Resource):
         else:
             raise NoJsonError
 
-class NextShopApi(Resource):
+class UserNextShopApi(Resource):
     @jwt_required
     def get(self):
         try:
@@ -50,3 +50,18 @@ class NextShopApi(Resource):
             return Response(dumps(user_shops.next_shop), mimetype="application/json", status=200)
         except Exception as e:
             raise InternalServerError
+
+class UserDelShopApi(Resource):
+    @jwt_required
+    def delete(self, shop_id):
+        try:
+            user_id = get_jwt_identity()
+            user_shops = UserShops.objects.get(user_id=user_id)
+            user_shops.shops.remove(shop_id)
+            user_shops.save()
+        except ValueError:
+            # shop is not in the list
+            pass
+        except Exception as e:
+            raise InternalServerError
+        return "", 200

@@ -8,7 +8,7 @@ from flask_jwt_extended import JWTManager
 from bson.json_util import dumps
 
 from .auth import SignupApi, LoginApi
-from .user_shops import ShopListApi, NextShopApi
+from .user_shops import UserShopListApi, UserNextShopApi, UserDelShopApi
 from .shops import ShopApi, AllShopsApi, ShopCurrentPeopleDataApi, ShopHistoricalPeopleDataApi
 from .db import initialize_db
 from .errors import errors
@@ -51,8 +51,9 @@ class ConfigClass(object):
 def initialize_routes(api):
     api.add_resource(SignupApi, '/auth/signup')
     api.add_resource(LoginApi, '/auth/login')
-    api.add_resource(ShopListApi, '/user/shops')
-    api.add_resource(NextShopApi, '/user/next_shop')
+    api.add_resource(UserShopListApi, '/user/shops')
+    api.add_resource(UserNextShopApi, '/user/next_shop')
+    api.add_resource(UserDelShopApi, '/user/del/<string:shop_id>')
     api.add_resource(AllShopsApi, '/shops/all')
     api.add_resource(ShopApi, '/shops/shop/<string:shop_id>')
     api.add_resource(ShopCurrentPeopleDataApi, '/shops/people/<string:shop_id>')
