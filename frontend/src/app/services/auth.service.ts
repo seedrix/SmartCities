@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ShopsService } from './shops.service';
 // import OktaAuth from '@okta/okta-auth-js';
 
 @Injectable({
@@ -30,15 +31,12 @@ export class AuthService {
   }
 
   async checkAuthenticated() {
-    // const authenticated = await this.authClient.session.exists();
-    const authenticated = this.isLoggedIn
-
-    this.isAuthenticated.next(authenticated);
-    console.log(authenticated)
+    const authenticated = this.isLoggedIn;
+    // this.isAuthenticated.next(authenticated);
     return authenticated;
   }
 
-  async register(username: string, password: string) {
+  async register(username: string, password: string) {    
     const json = this.createJSON(username, password)
     try {
       const response = await this.http.post(this.signupUrl, json, this.httpOptions).toPromise();
@@ -94,18 +92,18 @@ export class AuthService {
       }
     }
 
-  }
+  } 
+
+  
 
   loginSuccessful(response, username) {
-    this.isLoggedIn = true;
-    this.isAuthenticated.next(true);
+    this.isLoggedIn = true;    
     this.router.navigateByUrl("/" + this.redirectUrl)
     this.token = response.token
     if (username === "admin@admin.de") {
       this.isAdmin = true
     }
-    console.log(response)
-
+    this.isAuthenticated.next(true);
   }
 
   createJSON(username: string, password: string) {

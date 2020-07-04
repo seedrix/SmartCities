@@ -1,14 +1,14 @@
 <div class="container pt-4">
     <div class="row">
         <div class="col">
-            <h3 class="mat-display-1 text-center" color="primary" *ngIf="allShopsVisited">
+            <h3 class="mat-display-1 text-center" color="primary" *ngIf="allShopsVisited && !waitForNextShop">
                 <mat-icon color="primary">card_giftcard</mat-icon> Thank you for buying!
             </h3>
 
         </div>
     </div>
 
-    <div class="row text-center" *ngIf="!shops.shopsSelected">
+    <div class="row text-center" *ngIf="!shops.shopsSelected && !waitForNextShop">
 
             <mat-card class="w-50">
                 <mat-card-header class="text-center">
@@ -30,7 +30,7 @@
     </div>
 
 
-    <div class="row text-center" *ngIf="shops.shopsSelected && nextShop && !allShopsVisited">
+    <div class="row text-center" *ngIf="shops.shopsSelected && nextShop && !allShopsVisited && !waitForNextShop">
         <mat-card class="w-50">
             <mat-card-header class="text-center">
                 <mat-card-title class="text-center">{{nextShop.name}}</mat-card-title>
@@ -42,5 +42,19 @@
                 </button>
             </mat-card-actions>
         </mat-card>
+    </div>
+
+    <div class="row text-center" *ngIf="waitForNextShop">
+        <mat-card class="w-50">
+            <mat-card-header class="text-center">
+                <mat-card-title class="text-center">Your next shop will be shown soon.</mat-card-title>
+            </mat-card-header>
+            <img mat-card-image src="/assets/time.webp">
+            <mat-card-content>
+                Please wait until the planer finds the next shop for you to visit.
+                This takes usually around 10 seconds.
+            </mat-card-content>   
+        </mat-card>
+        
     </div>
 </div>

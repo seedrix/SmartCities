@@ -6,7 +6,7 @@
   <h1 class="display-1">Guidance System</h1>
 
   <span class="spacer"></span>
-  <a *nfIf="authService.isLoggedIn" class="right" mat-button [routerLink]="''" (click)="logout()">
+  <a *ngIf="authService.isLoggedIn" class="right" mat-button [routerLink]="''" (click)="logout()">
     <mat-icon>power_settings_new</mat-icon> Logout
   </a>
 

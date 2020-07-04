@@ -24,11 +24,16 @@ export class ShopsService {
   public userShops: { [shop_id: string]: Shop } = {};
 
   shopsInit: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  userShopsInit: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
 
   constructor(private http: HttpClient, private snackbar: MatSnackBar, private authService: AuthService) {
     this.getShops()
-
+    this.authService.isAuthenticated.subscribe(value => {
+      if (value === true) {
+        this.getShopList()
+      }
+    })
   }
 
   async getShops() {
@@ -50,20 +55,20 @@ export class ShopsService {
     }
   }
 
-  async setSelection(shops: Shop[]) {
+  async setSelection(shops: string[]) {
     const httpOptions = this.createHttpPostOptions();
     const json = this.createJSON(shops)
     try {
       const response = await this.http.post(this.postShopsUrl, json, httpOptions).toPromise();
       this.shopsSelected = true
       this.userShops = {}
-      shops.forEach(shop => {
-        this.userShops[shop.shop_id] = shop
+      shops.forEach(id => {
+        this.userShops[id] = this.shopMap[id]
       })
+      console.log(this.userShops)
       this.snackbar.open("Shop list saved.", "", {
         duration: 4000,
       });
-      console.log(response)
     } catch (error) {
       console.log("Error Status: " + error.status)
       console.log(error)
@@ -91,11 +96,11 @@ export class ShopsService {
       if (shops.length > 0) {
         this.shopsSelected = true
       }
-
+      this.userShopsInit.next(true);
       return response;
 
 
-    } catch (error) {
+    } catch (error) {      
       console.log("Error Status: " + error.status)
       console.log(error)
       this.snackbar.open("Could not reach the backend server.", "", {
@@ -107,14 +112,14 @@ export class ShopsService {
   async shopVisited(shop: Shop) {
     const httpOptions = this.createHttpGetOptions();
     try {
-      const response: any = await this.http.get(this.postShopsUrl + "/" + shop.shop_id, httpOptions).toPromise();
+      const response: any = await this.http.delete(this.postShopsUrl + "/" + shop.shop_id, httpOptions).toPromise();
+      console.log(this.userShops)
       delete this.userShops[shop.shop_id]
-
-      if (Object.keys(this.userShops).length != 0) {
+      console.log(this.userShops)
+      if (Object.keys(this.userShops).length === 0) {
+        console.log("user shops empty")
         this.shopsSelected = false
-      }
-      
-      console.log(response)
+      }      
       return response
 
     } catch (error) {
