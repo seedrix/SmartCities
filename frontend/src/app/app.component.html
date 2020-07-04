@@ -30,14 +30,16 @@
 
       <a mat-list-item [routerLink]="'/history'">
         <mat-icon>timeline</mat-icon> History
-      </a>      
+      </a>
 
-      <div *ngIf="authService.isAdmin">
+      <!-- <div *ngIf="authService.isAdmin"> -->
+      <div>
         <mat-divider></mat-divider>
         <button mat-button class="w-100" (click)="toggleAdmin()" matSubheader>Sensor Data </button>
         <div [@showHideAdmin]="showAdmin ? 'open' : 'closed'">
-          <a mat-list-item routerLink="/display/">
-            <mat-icon>tv</mat-icon> todo
+          <a mat-list-item routerLink="/sensordata/">
+            <mat-icon>videocam
+            </mat-icon> Sensor Data
           </a>
         </div>
       </div>

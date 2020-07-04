@@ -44,7 +44,6 @@ export class HistoryComponent implements OnInit {
     // this.chartDatasets = []
     let date = this.getDate()
     for (let key in this.shops.shopMap) {
-      console.log(key)
       try {
         const response: any = await this.http.get(this.historyUrl + key + "/" + date).toPromise();
         console.log(response)

@@ -30,9 +30,12 @@ export class AuthService {
   constructor(private router: Router, private snackbar: MatSnackBar, private http: HttpClient) {
   }
 
-  async checkAuthenticated() {
+  async checkAuthenticated() {    
+    let token = localStorage.getItem('token');
+    if (token !== null) {
+      this.fromToken(token)
+    }
     const authenticated = this.isLoggedIn;
-    // this.isAuthenticated.next(authenticated);
     return authenticated;
   }
 
@@ -94,12 +97,24 @@ export class AuthService {
 
   } 
 
-  
+  fromToken(token) {
+    this.isLoggedIn = true;   
+    let username = localStorage.getItem('username'); 
+    this.token = token;
+    if (username === "admin@admin.de") {
+      this.isAdmin = true
+    }
+
+    this.isAuthenticated.next(true);
+  }
 
   loginSuccessful(response, username) {
     this.isLoggedIn = true;    
     this.router.navigateByUrl("/" + this.redirectUrl)
-    this.token = response.token
+    this.token = response.token;
+    localStorage.setItem('token', this.token);
+    localStorage.setItem('username', username);
+
     if (username === "admin@admin.de") {
       this.isAdmin = true
     }
@@ -119,6 +134,7 @@ export class AuthService {
       // await this.authClient.signOut();
       this.isLoggedIn = false
       this.isAdmin = false
+      localStorage.removeItem('token');
       this.isAuthenticated.next(false);
       this.router.navigate([redirect]);
     } catch (err) {

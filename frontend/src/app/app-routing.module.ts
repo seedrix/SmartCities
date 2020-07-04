@@ -6,6 +6,7 @@ import { LoginComponent } from './login/login.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { HistoryComponent } from './history/history.component';
 import { NextShopComponent } from './next-shop/next-shop.component';
+import { SensordataComponent } from './sensordata/sensordata.component';
 
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'next', component: NextShopComponent, canActivate: [ AuthGuardService ]  },
   { path: 'history', component: HistoryComponent, canActivate: [ AuthGuardService ]  },
   { path: 'current', component: MonitorComponent, canActivate: [ AuthGuardService ]  },
+  { path: 'sensordata', component: SensordataComponent, canActivate: [ AuthGuardService ]  },
 ];
 
 @NgModule({
