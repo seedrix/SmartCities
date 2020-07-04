@@ -57,6 +57,10 @@ example body:
 ]
 ```
 
+## /user/shops/{string:shop_id}
+### delete
+deletes the requested shop from the user's shop list
+
 # Auth
 ## /auth/signup
 ### post

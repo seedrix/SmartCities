@@ -57,7 +57,7 @@ class UserNextShopApi(Resource):
         except Exception as e:
             raise InternalServerError
 
-class UserDelShopApi(Resource):
+class UserShopApi(Resource):
     @jwt_required
     def delete(self, shop_id):
         try:
