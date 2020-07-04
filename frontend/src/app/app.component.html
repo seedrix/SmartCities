@@ -32,8 +32,8 @@
         <mat-icon>timeline</mat-icon> History
       </a>
 
-      <!-- <div *ngIf="authService.isAdmin"> -->
-      <div>
+      <div *ngIf="authService.isAdmin">
+      <!-- <div> -->
         <mat-divider></mat-divider>
         <button mat-button class="w-100" (click)="toggleAdmin()" matSubheader>Sensor Data </button>
         <div [@showHideAdmin]="showAdmin ? 'open' : 'closed'">

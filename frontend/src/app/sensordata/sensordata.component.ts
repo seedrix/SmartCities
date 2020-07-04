@@ -9,8 +9,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./sensordata.component.scss']
 })
 export class SensordataComponent implements OnInit {
+  historyUrl: string;
 
-  constructor(private http: HttpClient, private shops: ShopsService, private snackbar: MatSnackBar) { }
+  constructor(private http: HttpClient, private shops: ShopsService, private snackbar: MatSnackBar) {
+    this.historyUrl = this.shops.url + "shops/people/";
+  }
+
 
   ngOnInit(): void {
     if (Object.keys(this.shops.shopMap).length != 0) {
@@ -25,39 +29,8 @@ export class SensordataComponent implements OnInit {
   }
 
   private async getData() {
-    // this.chartDatasets = []
-    let currentData = []
-    let maxData = []
-    let labels = []
-
-    for (let key in this.shops.shopMap) {
-      try {
-        const response: any = await this.http.get(this.historyUrl + key).toPromise();
-        let id = response.payload.shop_id
-        let name = this.shops.shopMap[id].name
-        maxData.push(this.shops.shopMap[id].maxPeople)
-        console.log(maxData)
-        currentData.push(response.payload.count)
-        labels.push(name)
-      } catch (error) {
-        console.log("Error Status: " + error.status)
-        console.log(error)
-        this.snackbar.open("Could not show values for shop: " + this.shops.shopMap[key].name, "", {
-          duration: 3000,
-        });
-      }
-    }
-    this.chartLabels = labels;
-
-    this.chartDatasets = [{
-      data: currentData,
-      label: 'Current number of customers.',
-    }, {
-      data: maxData,
-      label: 'Maximum number of customers.',
-    }];
-
     
+
   }
 
 }

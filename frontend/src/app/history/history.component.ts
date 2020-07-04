@@ -12,12 +12,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class HistoryComponent implements OnInit {
   historyUrl: string;
 
-  public chartDatasets: Array<any> = [
-    { data: [65, 59, 80, 81, 56, 55, 40], label: 'My First dataset' },
-    { data: [28, 48, 40, 19, 86, 27, 90], label: 'My Second dataset' }
-  ];
+  public chartDatasets: Array<any> = [{
+    data: [0], 
+    label: "No data available.",
+  }];
 
-  public chartLabels: Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  public chartLabels: Array<any> = ["No data available."];
 
   ngOnInit(): void {
     
@@ -42,16 +42,29 @@ export class HistoryComponent implements OnInit {
 
   private async getData() {
     // this.chartDatasets = []
+    let chartData = []
+    let labels = []
     let date = this.getDate()
     for (let key in this.shops.shopMap) {
       try {
         const response: any = await this.http.get(this.historyUrl + key + "/" + date).toPromise();
-        console.log(response)
+        let data = []
+        let time = []
+        
+        response.forEach(element => {
+          data.push(element.payload.count)
+          time.push(element.datetime)
+        });
 
-        // this.chartDatasets.push({
-        //   data: [65, 59, 80, 81, 56, 55, 40], 
-        //   label: this.shops.shopMap[key].name,
-        // });
+        chartData.push({
+          data: data, 
+          label: this.shops.shopMap[key].name,
+        });
+
+        if (labels.length == 0) {
+          labels = time
+        }
+        
   
       } catch (error) {
         console.log("Error Status: " + error.status)
@@ -62,6 +75,8 @@ export class HistoryComponent implements OnInit {
       }
     }
 
+    this.chartDatasets = chartData;
+    this.chartLabels = labels
     
 
   }
