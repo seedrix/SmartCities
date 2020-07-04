@@ -29,7 +29,9 @@ class SignupApi(Resource):
                 id = user.id
                 user_shops = UserShops(**{"user_id": str(id), "shops": [], "next_shop": ""})
                 user_shops.save()
-                return {'id': str(id)}, 200
+                expires = datetime.timedelta(days=1)
+                access_token = create_access_token(identity=str(user.id), expires_delta=expires)
+                return {'id': str(id), 'token': access_token}, 200
             except (FieldDoesNotExist, ValidationError):
                 raise SchemaValidationError
             except NotUniqueError:
@@ -49,7 +51,6 @@ class LoginApi(Resource):
                 authorized = user.check_password(body.get('password'))
                 if not authorized:
                     return {'error': 'Email or password invalid'}, 401
-                
                 expires = datetime.timedelta(days=1)
                 access_token = create_access_token(identity=str(user.id), expires_delta=expires)
                 return {'token': access_token}, 200
