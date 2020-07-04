@@ -3,8 +3,8 @@ from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from bson.json_util import dumps
 from jsonschema import validate, ValidationError
-from .db_models import UserShops
-from .errors import NoJsonError, SchemaValidationError, InternalServerError
+from .db_models import UserShops, Shop
+from .errors import NoJsonError, SchemaValidationError, InternalServerError, ResourceDoesNotExist
 
 shop_list_schema = {
     "type": "array",
@@ -29,6 +29,10 @@ class UserShopListApi(Resource):
             try:
                 body = request.get_json()
                 validate(body, schema=shop_list_schema)
+                for shop in body:
+                    # check if all shops ids are valid
+                    if Shop.objects(shop_id=shop).count() == 0:
+                        raise ResourceDoesNotExist
                 user_id = get_jwt_identity()
                 user_shops = UserShops.objects.get(user_id=user_id)
                 user_shops.shops = body
@@ -36,6 +40,8 @@ class UserShopListApi(Resource):
                 return "", 200
             except ValidationError:
                 raise SchemaValidationError
+            except ResourceDoesNotExist as r:
+                raise r
             except Exception as e:
                 raise InternalServerError
         else:
