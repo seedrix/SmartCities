@@ -82,8 +82,10 @@ class ShopHistoricalPeopleDataApi(Resource):
                     'timestamp': {'$first': '$timestamp'},
                     'shop_id': {'$first': '$payload.shop_id'},
                     'datetime': {'$first': '$datetime'}
-                }
-            }, {'$project': {
+                }, 
+            },
+            { "$sort": { "timestamp": 1 }}, 
+            {'$project': {
                 '_id': 0,
                 'timestamp': '$_id.timestamp',
                 'datetime': {'$dateToString': {'date': {'$add': [datetime.fromtimestamp(0), {"$multiply": ['$_id.timestamp', 1000]}]}, 'format':'%G-%m-%d %H:%M:%S'}},
