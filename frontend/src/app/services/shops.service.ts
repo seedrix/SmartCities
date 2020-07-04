@@ -21,6 +21,7 @@ export class ShopsService {
   nextShop: Shop;
 
   public shopMap: { [shop_id: string]: Shop } = {};
+  public userShops: { [shop_id: string]: Shop } = {};
 
   shopsInit: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -55,6 +56,10 @@ export class ShopsService {
     try {
       const response = await this.http.post(this.postShopsUrl, json, httpOptions).toPromise();
       this.shopsSelected = true
+      this.userShops = {}
+      shops.forEach(shop => {
+        this.userShops[shop.shop_id] = shop
+      })
       this.snackbar.open("Shop list saved.", "", {
         duration: 4000,
       });
@@ -78,6 +83,11 @@ export class ShopsService {
         shops.push(this.shopMap[shop_id])
       });
 
+      this.userShops = {}
+      shops.forEach(shop => {
+        this.userShops[shop.shop_id] = shop
+      })
+
       if (shops.length > 0) {
         this.shopsSelected = true
       }
@@ -94,30 +104,26 @@ export class ShopsService {
     }
   }
 
-  shopVisited() {
-    // TODO
-    // const httpOptions = this.createHttpGetOptions();
-    // try {
-    //   const response: any = await this.http.get(this.getShopListUrl, httpOptions).toPromise();
-    //   let shops = []
-    //   response.forEach(shop_id => {
-    //     shops.push(this.shopMap[shop_id])
-    //   });
+  async shopVisited(shop: Shop) {
+    const httpOptions = this.createHttpGetOptions();
+    try {
+      const response: any = await this.http.get(this.postShopsUrl + "/" + shop.shop_id, httpOptions).toPromise();
+      delete this.userShops[shop.shop_id]
 
-    //   if (shops.length > 0) {
-    //     this.shopsSelected = true
-    //   }
+      if (Object.keys(this.userShops).length != 0) {
+        this.shopsSelected = false
+      }
+      
+      console.log(response)
+      return response
 
-    //   return response;
-
-
-    // } catch (error) {
-    //   console.log("Error Status: " + error.status)
-    //   console.log(error)
-    //   this.snackbar.open("Could not reach the backend server.", "", {
-    //     duration: 2000,
-    //   });
-    // }
+    } catch (error) {
+      console.log("Error Status: " + error.status)
+      console.log(error)
+      this.snackbar.open("Could not reach the backend server.", "", {
+        duration: 2000,
+      });
+    }
 
   }
 

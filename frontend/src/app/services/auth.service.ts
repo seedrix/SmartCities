@@ -18,7 +18,7 @@ export class AuthService {
     })
   };
 
-  isLoggedIn = false
+  public isLoggedIn = false
   public isAdmin = false
   token: string
   redirectUrl: string = "/list";

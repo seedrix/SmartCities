@@ -1,20 +1,39 @@
 <div class="container pt-4">
     <div class="row">
         <div class="col">
-            <!-- <h1 class="mat-display-3 text-center">Next Shop</h1> -->
-
-            <div class="text-center" *ngIf=!shops.shopsSelected>
-                Select shops in order to get a recommendation for your next shop.
-            </div>
+            <h3 class="mat-display-1 text-center" color="primary" *ngIf="allShopsVisited">
+                <mat-icon color="primary">card_giftcard</mat-icon> Thank you for buying!
+            </h3>
 
         </div>
     </div>
-    
-    
-    <div class="row text-center" *ngIf="shops.shopsSelected && nextShop">
+
+    <div class="row text-center" *ngIf="!shops.shopsSelected">
+
+            <mat-card class="w-50">
+                <mat-card-header class="text-center">
+                    <mat-card-title class="text-center">Select shops in order to get a recommendation for your next
+                        shop.</mat-card-title>
+                </mat-card-header>      
+                <img mat-card-image src="/assets/mall.jpg">
+                
+                <!-- <mat-card-content>
+                    Select shops in order to get a recommendation for your next
+                        shop.
+                </mat-card-content>           -->
+                <mat-card-actions>
+                    <button class="w-100" color="primary" mat-stroked-button (click)="toShopList()">
+                        <mat-icon color="primary">store</mat-icon> To shop list.
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+    </div>
+
+
+    <div class="row text-center" *ngIf="shops.shopsSelected && nextShop && !allShopsVisited">
         <mat-card class="w-50">
             <mat-card-header class="text-center">
-              <mat-card-title class="text-center">{{nextShop.name}}</mat-card-title>
+                <mat-card-title class="text-center">{{nextShop.name}}</mat-card-title>
             </mat-card-header>
             <img mat-card-image [src]="logoSrc  | safeHtml">
             <mat-card-actions>
@@ -22,6 +41,6 @@
                     Shop visited.
                 </button>
             </mat-card-actions>
-          </mat-card>
+        </mat-card>
     </div>
 </div>

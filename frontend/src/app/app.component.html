@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" *ngIf="navbar.visible">
+<mat-toolbar color="primary">
   <button mat-icon-button (click)="drawer.toggle()">
     <mat-icon *ngIf="drawer.opened">arrow_backward</mat-icon>
     <mat-icon *ngIf="!drawer.opened">menu</mat-icon>
@@ -6,7 +6,7 @@
   <h1 class="display-1">Guidance System</h1>
 
   <span class="spacer"></span>
-  <a class="right" mat-button [routerLink]="''" (click)="logout()">
+  <a *nfIf="authService.isLoggedIn" class="right" mat-button [routerLink]="''" (click)="logout()">
     <mat-icon>power_settings_new</mat-icon> Logout
   </a>
 

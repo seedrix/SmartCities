@@ -7,7 +7,6 @@ import {
   animate,
   transition,
 } from '@angular/animations';
-import { NavbarService } from './services/navbar.service';
 import { AuthService } from './services/auth.service';
 
 @Component({
@@ -38,7 +37,7 @@ import { AuthService } from './services/auth.service';
 export class AppComponent {
   title = 'frontend';
   showAdmin = false
-  constructor(public shops: ShopsService, public navbar: NavbarService, public authService: AuthService) {
+  constructor(public shops: ShopsService, public authService: AuthService) {
   }
 
   toggleAdmin() {

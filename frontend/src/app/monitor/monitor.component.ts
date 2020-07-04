@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ShopsService } from '../services/shops.service';
-import { NavbarService } from '../services/navbar.service';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 

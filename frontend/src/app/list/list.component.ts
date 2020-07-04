@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ShopsService } from '../services/shops.service';
-import { NavbarService } from '../services/navbar.service';
 import { Shop } from '../utility/shop';
 
 @Component({
@@ -11,7 +10,7 @@ import { Shop } from '../utility/shop';
 export class ListComponent implements OnInit {  
   selectedShops: any = [];
 
-  constructor(public shops: ShopsService, private navbar: NavbarService) { }
+  constructor(public shops: ShopsService) { }
 
   async ngOnInit() {
     let shopList = await this.shops.getShopList()
@@ -21,9 +20,6 @@ export class ListComponent implements OnInit {
     }
   }
 
-  ngAfterContentInit() {
-    this.navbar.showNavbar()
-  }
 
   sendShopList() {
     this.shops.setSelection(this.selectedShops)
