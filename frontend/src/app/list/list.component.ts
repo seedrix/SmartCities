@@ -41,7 +41,7 @@ export class ListComponent implements OnInit {
 
 
   sendShopList() {
-    this.shops.setSelection(this.selectedShops)
+    this.shops.setSelection(this.selectedShops)    
   }
 
 }

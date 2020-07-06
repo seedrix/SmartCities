@@ -5,6 +5,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,7 @@ export class ShopsService {
   userShopsInit: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
 
-  constructor(private http: HttpClient, private snackbar: MatSnackBar, private authService: AuthService) {
+  constructor(private http: HttpClient, private snackbar: MatSnackBar, private authService: AuthService, private router: Router) {
     this.getShops()
     this.authService.isAuthenticated.subscribe(value => {
       if (value === true) {
@@ -66,6 +67,7 @@ export class ShopsService {
         this.userShops[id] = this.shopMap[id]
       })
       console.log(this.userShops)
+      this.router.navigate(["next"]);
       this.snackbar.open("Shop list saved.", "", {
         duration: 4000,
       });
