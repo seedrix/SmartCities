@@ -3,18 +3,20 @@ import logging
 
 class Aggregator:
     def __init__(self, mqtt_handler, in_topic, sensor_type):
+        self.log = logging.getLogger(self.__class__.__name__)
         self.shop_values = {}
         self.in_topic = in_topic
         self.sensor_type = sensor_type
         mqtt_handler.register_handler(self.in_topic, self._aggregate_message)
+        self.log.info('Created %s', self.__class__.__name__)
 
     def update(self, shop_id, sensor_id, value):
         if shop_id not in self.shop_values:
             self.shop_values[shop_id] = {}
-            logging.info("New shop: %s", shop_id)
+            self.log.info("New shop: %s", shop_id)
         shop_value = self.shop_values[shop_id]
         if sensor_id not in shop_value:
-            logging.info('Added sensor instance for shop %s: %s', shop_id, sensor_id)
+            self.log.info('Added sensor instance for shop %s: %s', shop_id, sensor_id)
         shop_value[sensor_id] = value
 
     def get_values(self, shop_id):
@@ -36,12 +38,12 @@ class Aggregator:
         assert isinstance(message, dict)
         shop_id, sensor_id = self._extract_identifiers(message)
         if shop_id is None or sensor_id is None:
-            logging.warning("Can not aggregate message for sensor type %s from topic %s: identifier(s) missing",
+            self.log.warning("Can not aggregate message for sensor type %s from topic %s: identifier(s) missing",
                             self.sensor_type, topic)
             return
         payload = self._extract_payload(message)
         if payload is None:
-            logging.warning("Can not aggregate message for sensor %s %s from topic %s: payload missing",
+            self.log.warning("Can not aggregate message for sensor %s %s from topic %s: payload missing",
                             self.sensor_type, sensor_id, topic)
             return
         self.update(shop_id, sensor_id, payload)

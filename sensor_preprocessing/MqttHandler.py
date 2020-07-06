@@ -3,6 +3,9 @@ import json
 import logging
 import re
 
+logger = logging.getLogger(__name__)
+
+
 broker_hostname = "broker.hivemq.com"
 broker_port = 1883
 
@@ -54,7 +57,6 @@ def get_sensor_topic(shop_id, sensor_type, sensor_id, suffix, use_type_subtopic=
 
 
 class MqttHandler:
-    # import paho.mqtt.client as mqtt
     retain_messages = False
     # Set to true to ignore all messages with the retain flag. Only useful for debugging
     ignore_retained_messages = False
@@ -75,34 +77,34 @@ class MqttHandler:
         self.client.connect(broker_hostname, broker_port, 60)
 
     def _on_connect(self, client, userdata, flags, rc):
-        logging.info("Connected to mqtt broker with result code %s", str(rc))
+        logger.info("Connected to mqtt broker with result code %s", str(rc))
 
     def _on_disconnect(self, client, userdata, rc):
-        logging.warning("Mqtt client disconnected with result code %s", str(rc))
+        logger.warning("Mqtt client disconnected with result code %s", str(rc))
 
     def register_handler(self, input_topic, data_callback):
-        logging.debug("Register topic %s", input_topic)
+        logger.debug("Register topic %s", input_topic)
         self.client.subscribe(input_topic)
 
         def _callback(client, userdata, msg):
             if msg.payload is None or len(msg.payload) == 0:
-                logging.debug("Ignore message with empty payload from topic: %s", msg.topic)
+                logger.debug("Ignore message with empty payload from topic: %s", msg.topic)
                 return
             if __class__.delete_retained_messages:
                 client.publish(msg.topic, retain=True)
-                logging.info("Deleted received message from broker from topic: %s", msg.topic)
+                logger.info("Deleted received message from broker from topic: %s", msg.topic)
             if __class__.ignore_retained_messages and msg.retain == 1:
-                logging.info("Dropping retained message from topic %s: %s", msg.topic, msg.payload)
+                logger.info("Dropping retained message from topic %s: %s", msg.topic, msg.payload)
                 return
-            logging.info("Got message from topic %s: %s", msg.topic, msg.payload)
+            logger.info("Got message from topic %s: %s", msg.topic, msg.payload)
             try:
                 msg_dict = json.loads(msg.payload)
             except json.JSONDecodeError as e:
-                logging.warning('Could not parse message to json from topic %s: %s  \nException: %s', msg.topic,
+                logger.warning('Could not parse message to json from topic %s: %s  \nException: %s', msg.topic,
                                 msg.payload, e)
                 return
             if not isinstance(msg_dict, dict):
-                logging.warning('Got message from %s with illegal format (expect dict, got %s): %s', msg.topic,
+                logger.warning('Got message from %s with illegal format (expect dict, got %s): %s', msg.topic,
                                 type(msg_dict), msg.payload)
                 return
             results = data_callback(msg.topic, msg_dict)
@@ -113,13 +115,16 @@ class MqttHandler:
             assert isinstance(results[0], MqttHandler.MqttMessage)
             for result in results:
                 assert isinstance(result, MqttHandler.MqttMessage)
-                logging.info("Publishing result to topic %s: %s", result.topic, result.message)
+                if logging.root.level <= logging.DEBUG :
+                    logger.info("Publishing result to topic %s: %s", result.topic, result.message)
+                else:
+                    logger.info("Publishing result to topic %s", result.topic)
                 client.publish(result.topic, payload=json.dumps(result.message), retain=__class__.retain_messages)
 
         self.client.message_callback_add(input_topic, callback=_callback)
 
     def _default_handler(self, client, userdata, msg):
-        logging.warning("Message for topic %s is not caught by any filter: %s", msg.topic, msg.payload)
+        logger.warning("Message for topic %s is not caught by any filter: %s", msg.topic, msg.payload)
 
     def loop_forever(self):
         self.client.loop_forever()

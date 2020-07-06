@@ -1,13 +1,16 @@
-import logging
+import logging as pylog
 from pymongo import MongoClient
 from pymongo import errors as mongoErrors
 from MqttHandler import MqttHandler, get_sensor_topic
 
-MqttHandler.retain_messages = False
-# Set to true to ignore all messages with the retain flag. Only useful for debugging
-MqttHandler.ignore_retained_messages = False
-# Set to true to delete all received messages with the retain flag on the broker. Only useful for debugging
-MqttHandler.delete_retained_messages = False
+logging = pylog.getLogger(__name__)
+
+if __name__ == '__main__':
+    MqttHandler.retain_messages = False
+    # Set to true to ignore all messages with the retain flag. Only useful for debugging
+    MqttHandler.ignore_retained_messages = False
+    # Set to true to delete all received messages with the retain flag on the broker. Only useful for debugging
+    MqttHandler.delete_retained_messages = False
 
 # Source: Adam Luchjenbroers, https://stackoverflow.com/questions/1969240/mapping-a-range-of-values-to-another
 def translate(value, leftMin, leftMax, rightMin, rightMax):
@@ -24,11 +27,7 @@ def translate(value, leftMin, leftMax, rightMin, rightMax):
 class DB_Handler_Act:
 
     def __init__(self):
-        MONGO_IP = "t1.max-reichel.de"
-        MONGO_PORT = 27017
-        MONGO_USER = "root"
-        MONGO_PW = "rootpassword"
-        MONGO_DB = "smart_cities"
+        from MongoCredentials import MONGO_IP, MONGO_PORT, MONGO_USER, MONGO_PW, MONGO_DB
         MONGO_COLLECTION_SHOPS = "shops"
         MONGO_TIMEOUT = 1000  # Time in ms
 
@@ -107,9 +106,12 @@ def get_shops_people_map():
         shop_map[shop['shop_id']] = shop['max_people']
     return shop_map
 
+def main(mqtt_handler):
+    shop_people_map = get_shops_people_map()
+    disp = DisplayActorController(mqtt_handler, shop_people_map)
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     mqtt_handler = MqttHandler()
-    shop_people_map = get_shops_people_map()
-    disp = DisplayActorController(mqtt_handler, shop_people_map)
+    main()
     mqtt_handler.loop_forever()
