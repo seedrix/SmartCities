@@ -128,6 +128,12 @@ class SolverIOMapper:
         self.users_preferences = list()
         user_idx = 0
         for user_info in self.users_info:
+            if 'user_id' not in user_info:
+                print("Warning! User is missing user_id attribute!")
+                continue
+            if 'shops' not in user_info:
+                print(f"Warning! User {user_info['user_id']} is missing shops attribute!")
+                continue
             if len(user_info['shops']) == 0:
                 continue
             self.users_mapping['LIST'+str(user_idx)] = user_info[__class__.user_id_key]
