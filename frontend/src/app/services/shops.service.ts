@@ -58,10 +58,15 @@ export class ShopsService {
 
   async setSelection(shops: string[]) {
     const httpOptions = this.createHttpPostOptions();
-    const json = this.createJSON(shops)
+    const json = this.createJSON(shops)    
     try {
       const response = await this.http.post(this.postShopsUrl, json, httpOptions).toPromise();
-      this.shopsSelected = true
+      if (shops.length != 0) {
+        this.shopsSelected = true
+      } else {
+        this.shopsSelected = false
+      }
+      
       this.userShops = {}
       shops.forEach(id => {
         this.userShops[id] = this.shopMap[id]

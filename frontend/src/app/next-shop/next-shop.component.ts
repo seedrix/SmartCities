@@ -38,6 +38,11 @@ export class NextShopComponent implements OnInit {
       let nextShop = await this.shops.getNextShop();
       this.nextShop = nextShop;
       this.logoSrc = nextShop.logo;
+
+      // can happen if shops got unselected and the old planning value is retrieved
+      if (!(this.nextShop.shop_id in this.shops.userShops)) {
+        this.getNextShop()
+      }
     }
   }
 
@@ -46,7 +51,6 @@ export class NextShopComponent implements OnInit {
     if (!this.shops.shopsSelected) {
       console.log("all shops visited")
       this.allShopsVisited = true
-      this.nextShop
     } else {
       console.log("get next shop")
       this.getNextShop()
@@ -58,9 +62,17 @@ export class NextShopComponent implements OnInit {
     let sameShop = true
     console.log("query next shop")
     while (sameShop) {
+      if (!this.shops.shopsSelected) {
+        this.allShopsVisited = true
+        break;
+      }
+
       let nextShop = await this.shops.getNextShop();
+      console.log(nextShop)
+      
       if (nextShop === undefined) {
         console.log(nextShop)
+
       } else if (nextShop.shop_id !== this.nextShop.shop_id) {
         console.log("shop found")
         this.nextShop = nextShop;
