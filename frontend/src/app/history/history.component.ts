@@ -13,21 +13,21 @@ export class HistoryComponent implements OnInit {
   historyUrl: string;
 
   public chartDatasets: Array<any> = [{
-    data: [0], 
+    data: [0],
     label: "No data available.",
   }];
 
   public chartLabels: Array<any> = ["No data available."];
 
   ngOnInit(): void {
-    
+
   }
 
   constructor(private http: HttpClient, private shops: ShopsService, private snackbar: MatSnackBar) {
     this.historyUrl = this.shops.url + "shops/people/";
 
     if (Object.keys(shops.shopMap).length != 0) {
-      this.getData()     
+      this.getData()
     } else {
       this.shops.shopsInit.subscribe(value => {
         if (value) {
@@ -35,49 +35,125 @@ export class HistoryComponent implements OnInit {
         }
       })
     }
-    
 
-    
+
+
   }
 
   private async getData() {
     // this.chartDatasets = []
-    let chartData = []
-    let labels = []
+    const showFutureData = false;
+    const axisTicksInterval = 2;
+
     let date = this.getDate()
+
+    const timestamps = new Set();
+    const shopsData = {};
+    const timestampNow = Math.floor(Date.now() / 1000);
     for (let key in this.shops.shopMap) {
       try {
-        const response: any = await this.http.get(this.historyUrl + key + "/" + date).toPromise();
-        let data = []
-        let time = []
-        
+        const response: any = await this.http.get(this.historyUrl + key + '/' + date).toPromise();
+
+        const shopData = {};
         response.forEach(element => {
-          data.push(element.payload.count)
-          time.push(element.datetime)
+          if (showFutureData === false && timestampNow <= element.timestamp){
+            return;
+          }
+          shopData[element.timestamp] = element.payload.count;
+          timestamps.add(element.timestamp);
         });
+        shopsData[key] = shopData;
 
-        chartData.push({
-          data: data, 
-          label: this.shops.shopMap[key].name,
-        });
-
-        if (labels.length == 0) {
-          labels = time
-        }
-        
-  
       } catch (error) {
-        console.log("Error Status: " + error.status)
+        console.log('Error Status: ' + error.status)
         console.log(error)
-        this.snackbar.open("Could not show values for shop: " + this.shops.shopMap[key].name, "", {
+        this.snackbar.open('Could not show values for shop: ' + this.shops.shopMap[key].name, '', {
           duration: 3000,
         });
       }
     }
 
+    const chartData = [];
+    const labels = [];
+    const shopsDataNormalized = {};
+    for (const key in this.shops.shopMap) {
+      shopsDataNormalized[key] = [];
+      chartData.push({
+        data: shopsDataNormalized[key],
+        xAxisID: 'datetime',
+        label: this.shops.shopMap[key].name,
+      });
+    }
+    const sortedTimestamps = Array.from(timestamps);
+    sortedTimestamps.sort();
+    let lastTimestamp = new Date(0);
+    const dateDayFormatter = new Intl.DateTimeFormat('en-DE', {weekday: 'short', day: '2-digit', month: '2-digit', year: '2-digit'});
+    sortedTimestamps.forEach(timestamp => {
+      const thisDate = new Date(Number(timestamp) * 1000);
+      let suffix = '';
+      if (lastTimestamp.toLocaleDateString() !== thisDate.toLocaleDateString()) {
+        suffix = ';';
+      }
+      lastTimestamp = thisDate;
+      labels.push(dateDayFormatter.format(thisDate) + '; ' + thisDate.getHours() + suffix);
+
+      for (const key in this.shops.shopMap) {
+        if (timestamp in shopsData[key]) {
+          shopsDataNormalized[key].push(shopsData[key][timestamp]);
+        } else {
+          shopsDataNormalized[key].push(null);
+        }
+      }
+    });
+
     this.chartDatasets = chartData;
-    this.chartLabels = labels
-    
+    this.chartLabels = labels;
+    this.chartOptions = {
+      responsive: true,
+      scaleShowValues: true,
+      scales: {
+        xAxes: [
+          {
+            id: 'clock',
+            ticks: {
+              callback: (label, index)  => {
+                if (index % axisTicksInterval === 0){
+                  return label.split(';')[1];
+                }
+                return null;
+              }
+            }
+          },
+          {
+            id: 'date',
+            ticks: {
+              autoSkip: false,
+              callback: (label, index) => {
+                const split = label.split(';');
+                if (split.length === 3) {
+                  return split[0];
+                }
+                return null;
+              }
+            },
+            gridLines: {
+              lineWidth: 2,
+              color: 'rgba(0, 150, 0, 0.4)'
+            }
+          },
+          {
+            id: 'datetime',
+            ticks: {
+              display: false
+            },
+            gridLines: {
+              display: false,
+              color: 'rgba(0, 0, 0, 0)',
+              lineWidth: 0.001
+            }
+          }]}
+
+    };
 
   }
 
@@ -87,24 +163,24 @@ export class HistoryComponent implements OnInit {
     date.setHours(0)
     date.setMinutes(0)
     date.setSeconds(0)
-    console.log(date)    
-    
+    console.log(date)
+
     // 2 weeks
     date.setDate(date.getDate()-7);
     date.setMinutes(0)
     date.setSeconds(0)
 
-    
+
     let timestamp = Math.floor(+date / 1000)
     console.log(timestamp)
     return timestamp
 
   }
-  
+
 
   public chartType: string = 'line';
 
-  
+
 
 
   public chartOptions: any = {
@@ -112,6 +188,6 @@ export class HistoryComponent implements OnInit {
   };
   public chartClicked(e: any): void { }
   public chartHovered(e: any): void { }
-  
+
 
 }
