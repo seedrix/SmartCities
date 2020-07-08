@@ -71,7 +71,7 @@ class ShopHistoricalPeopleDataApi(Resource):
         if Shop.objects(shop_id=shop_id).count() == 0:
             raise ResourceDoesNotExist
         try:
-            intervall_seconds = 60*5
+            intervall_seconds = 60 * 59 + 59
             pipline = [{"$match": {"topic": "de/smartcity/2020/mymall/shops/"+shop_id+"/people/count", "timestamp": {"$gte": timestamp}}},
                        {
                 '$group': {
