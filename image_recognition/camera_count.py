@@ -39,7 +39,8 @@ def generate_key(filename):
 		# Read and update hash string value in blocks of 4K
 		for byte_block in iter(lambda: f.read(4096),b""):
 			sha256_hash.update(byte_block)
-	return sha256_hash.hexdigest()
+		file_extension = os.path.splitext(filename)[1]
+	return sha256_hash.hexdigest() + file_extension
 
 
 def upload_image(image, bucket, key):
