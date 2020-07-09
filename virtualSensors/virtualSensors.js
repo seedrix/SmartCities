@@ -152,7 +152,7 @@ function ConnectionLost(res) {
     if (res.errorCode != 0) {
         console.log("Connection lost:" + res.errorMessage);
         //Connect();
-        document.getElementById('status').innerHTML = "MQTT connection lost!";
+        document.getElementById('status').innerHTML = "MQTT connection lost!  <button type=\"button\" onclick=\"Connect()\">reconnect</button>";
         document.getElementById('status').style.backgroundColor = 'red';
     }
 }
