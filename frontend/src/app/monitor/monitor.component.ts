@@ -84,13 +84,18 @@ export class MonitorComponent implements OnInit {
 
     for (let key in this.shops.shopMap) {
       try {
+        console.log(key)
         const response: any = await this.http.get(this.historyUrl + key).toPromise();
         let id = response.payload.shop_id
         let name = this.shops.shopMap[id].name
-        maxData.push(this.shops.shopMap[id].maxPeople)
-        console.log(maxData)
-        currentData.push(response.payload.count)
+        let current = response.payload.count;
+        let max = this.shops.shopMap[id].maxPeople
+        let maxDifference = max - current;
+        console.log(id)
+        currentData.push(current)
         labels.push(name)
+
+        maxData.push(max)
       } catch (error) {
         console.log("Error Status: " + error.status)
         console.log(error)
@@ -109,7 +114,7 @@ export class MonitorComponent implements OnInit {
       label: 'Maximum number of customers.',
     }];
 
-    
+
   }
 
   ngOnInit(): void {
@@ -119,11 +124,12 @@ export class MonitorComponent implements OnInit {
     responsive: true,
     scales: {
       yAxes: [{
-          ticks: {
-              beginAtZero: true
-          }
-      }]
-  }
+        ticks: {
+          beginAtZero: true
+        }
+      },
+      ],
+    }
   };
   public chartClicked(e: any): void { }
   public chartHovered(e: any): void { }
