@@ -17,9 +17,9 @@ week7 = [{"weekday":0,"times":[{"height":"2","time":"07"},{"height":"7","time":"
 week8 = [{"weekday":0,"times":[{"height":"4","time":"07"},{"height":"8","time":"08"},{"height":"15","time":"09"},{"height":"23","time":"10"},{"height":"29","time":"11"},{"height":"32","time":"12"},{"height":"32","time":"13"},{"height":"29","time":"14"},{"height":"31","time":"15"},{"height":"39","time":"16"},{"height":"50","time":"17"},{"height":"56","time":"18"},{"height":"49","time":"19"},{"height":"32","time":"20"},{"height":"17","time":"21"}]},{"weekday":1,"times":[{"height":"6","time":"07"},{"height":"12","time":"08"},{"height":"20","time":"09"},{"height":"27","time":"10"},{"height":"32","time":"11"},{"height":"32","time":"12"},{"height":"27","time":"13"},{"height":"23","time":"14"},{"height":"24","time":"15"},{"height":"39","time":"16"},{"height":"57","time":"17"},{"height":"57","time":"18"},{"height":"46","time":"19"},{"height":"42","time":"20"},{"height":"23","time":"21"}]},{"weekday":2,"times":[{"height":"7","time":"07"},{"height":"13","time":"08"},{"height":"20","time":"09"},{"height":"27","time":"10"},{"height":"32","time":"11"},{"height":"33","time":"12"},{"height":"31","time":"13"},{"height":"29","time":"14"},{"height":"32","time":"15"},{"height":"45","time":"16"},{"height":"59","time":"17"},{"height":"59","time":"18"},{"height":"48","time":"19"},{"height":"59","time":"20"},{"height":"35","time":"21"}]},{"weekday":3,"times":[{"height":"5","time":"07"},{"height":"11","time":"08"},{"height":"18","time":"09"},{"height":"25","time":"10"},{"height":"30","time":"11"},{"height":"32","time":"12"},{"height":"29","time":"13"},{"height":"29","time":"14"},{"height":"35","time":"15"},{"height":"44","time":"16"},{"height":"43","time":"17"},{"height":"36","time":"18"},{"height":"40","time":"19"},{"height":"44","time":"20"},{"height":"26","time":"21"}]},{"weekday":4,"times":[{"height":"8","time":"07"},{"height":"17","time":"08"},{"height":"23","time":"09"},{"height":"30","time":"10"},{"height":"38","time":"11"},{"height":"41","time":"12"},{"height":"36","time":"13"},{"height":"32","time":"14"},{"height":"36","time":"15"},{"height":"46","time":"16"},{"height":"55","time":"17"},{"height":"54","time":"18"},{"height":"43","time":"19"},{"height":"27","time":"20"},{"height":"14","time":"21"}]},{"weekday":5,"times":[{"height":"10","time":"07"},{"height":"18","time":"08"},{"height":"29","time":"09"},{"height":"41","time":"10"},{"height":"53","time":"11"},{"height":"61","time":"12"},{"height":"62","time":"13"},{"height":"59","time":"14"},{"height":"55","time":"15"},{"height":"57","time":"16"},{"height":"67","time":"17"},{"height":"75","time":"18"},{"height":"68","time":"19"},{"height":"47","time":"20"},{"height":"24","time":"21"}]}]
 
 # Settings
-week = week6
-shop_id = "shop2"
-date_first_day = datetime.strptime('02/07/20', '%d/%m/%y')
+week = week4
+shop_id = "shop3"
+date_first_day = datetime.strptime('03/07/20', '%d/%m/%y')
 override_real_data = False
 
 print("date_first_day referd to a "+date_first_day.strftime('%A'))
@@ -151,7 +151,7 @@ def getMaxPeople(shops):
 def create_doc(day_offset, hour, people):
     t = date_first_day.replace(hour=hour, minute = 0, second=0) + timedelta(days=day_offset)
     payload = {
-        "shop_id" : "shop1",
+        "shop_id" : shop_id,
         "aggregated_sensors" : 1,
         "sensor_type" : "people",
         "count" : people,
