@@ -120,6 +120,13 @@ function updateValue(field){
 
 }
 
+function disableChilds(id, disable){
+    var nodes = document.getElementById(id).getElementsByTagName('input');
+    for(var i = 0; i < nodes.length; i++){
+        nodes[i].disabled = disable;
+    }
+}
+
 function animatee(element, className) {
     element.classList.remove('errorVal');
     element.classList.remove('updateVal');
@@ -159,7 +166,7 @@ function ConnectionLost(res) {
     }
 }
 
-const srRegex = /^de\/smartcity\/2020\/mymall\/shops\/[^\/]+\/sensors_raw\/[^\/]+\/[^\/]+\/count/;
+const srRegex = /^de\/smartcity\/2020\/mymall\/shops\/[^\/]+\/sensors\/[^\/]+\/count/;
 const peopleRegex = /^de\/smartcity\/2020\/mymall\/shops\/[^\/]+\/people\/count/;
 
 /*Callback for incoming message processing */
@@ -211,13 +218,13 @@ function addTableElement(topic, payload){
     animatee(row, 'newVal');
 }
 
-function toggleVisible(button) {
-    var x = document.getElementById("mqttTable");
+function toggleVisible(button, name, suffix) {
+    var x = document.getElementById(name);
     if (x.style.display === "none") {
         x.style.display = "block";
-        button.textContent = "Hide MQTT";
+        button.textContent = "Hide" + suffix;
     } else {
         x.style.display = "none";
-        button.textContent = "Show MQTT"
+        button.textContent = "Show" + suffix;
     }
 }
