@@ -136,7 +136,9 @@ function animatee(element, className) {
 /*Callback for successful MQTT connection */
 function Connected() {
     console.log("Connected");
-    mqttClient.subscribe('de/smartcity/2020/mymall/shops/+/sensors/+/count');
+    mqttClient.subscribe('de/smartcity/2020/mymall/shops/+/sensors/#');
+    mqttClient.subscribe('de/smartcity/2020/mymall/shops/+/sensors_raw/#');
+    mqttClient.subscribe('de/smartcity/2020/mymall/sensors/#');
     mqttClient.subscribe('de/smartcity/2020/mymall/shops/+/people/count');
     document.getElementById('status').innerHTML = "MQTT connected!";
     document.getElementById('status').style.backgroundColor = 'greenyellow';
@@ -157,9 +159,18 @@ function ConnectionLost(res) {
     }
 }
 
+const srRegex = /^de\/smartcity\/2020\/mymall\/shops\/[^\/]+\/sensors_raw\/[^\/]+\/[^\/]+\/count/;
+const peopleRegex = /^de\/smartcity\/2020\/mymall\/shops\/[^\/]+\/people\/count/;
+
 /*Callback for incoming message processing */
 function MessageArrived(message) {
     console.log(message.destinationName +" : " + message.payloadString);
+    addTableElement(message.destinationName, message.payloadString);
+
+    if(!(message.destinationName.match(peopleRegex) || message.destinationName.match(srRegex))){
+        return;
+    }
+
     var payload = JSON.parse(message.payloadString);
     var shopId = payload.shop_id;
     var sensorType = payload.sensor_type;
@@ -175,5 +186,38 @@ function MessageArrived(message) {
 
 }
 
+function addTableElement(topic, payload){
+    var table = document.getElementById("mqttTable");
+    var lastRow = table.children[0];
 
+    var numCell = document.createElement("td");
+    var numCellContent = document.createTextNode(String(parseInt(lastRow.children[0].textContent)+1));
+    numCell.appendChild(numCellContent);
 
+    var topicCell = document.createElement("td");
+    var topicCellContent = document.createTextNode(topic);
+    topicCell.appendChild(topicCellContent);
+
+    var payloadCell = document.createElement("td");
+    var payloadCellContent = document.createTextNode(payload);
+    payloadCell.appendChild(payloadCellContent);
+
+    var row = document.createElement("tr");
+    row.appendChild(numCell);
+    row.appendChild(topicCell);
+    row.appendChild(payloadCell);
+
+    table.insertBefore(row, lastRow);
+    animatee(row, 'newVal');
+}
+
+function toggleVisible(button) {
+    var x = document.getElementById("mqttTable");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+        button.textContent = "Hide MQTT";
+    } else {
+        x.style.display = "none";
+        button.textContent = "Show MQTT"
+    }
+}

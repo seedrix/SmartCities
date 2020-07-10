@@ -42,6 +42,10 @@
             0% {background-color:salmon;}
             100% { background-color:transparent;}
         }
+        td {
+            text-align: center;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -109,6 +113,10 @@
         <td></td>
         <td></td>
     </tbody>
+</table>
+<button type="button" onclick="toggleVisible(this)">Show MQTT</button>
+<table id="mqttTable" style="display: none">
+<tr style="display: none"><td>0</td><td></td><td></td></tr>
 </table>
 
 </body>
