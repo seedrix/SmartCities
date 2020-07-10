@@ -86,16 +86,16 @@ export class MonitorComponent implements OnInit {
       try {
         console.log(key)
         const response: any = await this.http.get(this.historyUrl + key).toPromise();
-        let id = response.payload.shop_id
-        let name = this.shops.shopMap[id].name
+        let id = response.payload.shop_id;
+        id = key;
+        let name = this.shops.shopMap[id].name;
         let current = response.payload.count;
-        let max = this.shops.shopMap[id].maxPeople
+        let max = this.shops.shopMap[id].maxPeople;
         let maxDifference = max - current;
-        console.log(id)
         currentData.push(current)
+        maxData.push(max)
         labels.push(name)
 
-        maxData.push(max)
       } catch (error) {
         console.log("Error Status: " + error.status)
         console.log(error)
@@ -104,6 +104,7 @@ export class MonitorComponent implements OnInit {
         });
       }
     }
+    console.log(currentData)
     this.chartLabels = labels;
 
     this.chartDatasets = [{
@@ -113,6 +114,8 @@ export class MonitorComponent implements OnInit {
       data: maxData,
       label: 'Maximum number of customers.',
     }];
+
+    console.log(this.chartLabels)
 
 
   }
