@@ -2,8 +2,21 @@
 
 var hostname = "broker.hivemq.com";
 var port = 8000;
-var clientId = "virtualS";
+var clientId = "simulatedS";
 clientId += new Date().getUTCMilliseconds();
+
+var virtSensorIdInfix = 'Simul1';
+
+function hashChanged() {
+    if (window.location.hash) {
+        virtSensorIdInfix = window.location.hash.substr(1);
+    }
+    window.document.title = 'Sensor Dashboard ('+virtSensorIdInfix+')';
+}
+window.onhashchange = hashChanged;
+hashChanged();
+
+var retainMsg = true;
 
 mqttClient = new Paho.MQTT.Client(hostname, port, clientId);
 mqttClient.onMessageArrived =  MessageArrived;
@@ -71,15 +84,15 @@ function updateValue(field){
     var value = parseInt(field.value);
     console.log(shopId, sensorType, value);
 
-    ids = {wifi:'wVirt'+shopId,
-        ble:'bVirt'+shopId,
-        cam:'cVirt'+shopId};
+    ids = {wifi:'w'+virtSensorIdInfix+shopId,
+        ble:'b'+virtSensorIdInfix+shopId,
+        cam:'c'+virtSensorIdInfix+shopId};
 
     var id = ids[sensorType];
 
-    topics = {ble: namespace+'/shops/'+shopId+'/sensors_raw/'+sensorType+'/bVirt'+shopId+'/list',
-        cam: namespace+'/shops/'+shopId+'/sensors_raw/'+sensorType+'/cVirt'+shopId+'/count',
-        wifi: namespace+'/shops/'+shopId+'/sensors_raw/'+sensorType+'/wVirt'+shopId+'/list'};
+    topics = {ble: namespace+'/shops/'+shopId+'/sensors_raw/'+sensorType+'/b'+virtSensorIdInfix+shopId+'/list',
+        cam: namespace+'/shops/'+shopId+'/sensors_raw/'+sensorType+'/c'+virtSensorIdInfix+shopId+'/count',
+        wifi: namespace+'/shops/'+shopId+'/sensors_raw/'+sensorType+'/w'+virtSensorIdInfix+shopId+'/list'};
 
     var topic = topics[sensorType];
     var payload = {sensor_type: sensorType,
@@ -101,9 +114,11 @@ function updateValue(field){
     }
     message = new Paho.MQTT.Message(JSON.stringify(payload));
     message.destinationName = topic;
+    message.retained = retainMsg;
     var success = true;
     try{
         mqttClient.send(message);
+        console.log(message);
     }catch(err){
         if (err) {
             success = false;
@@ -189,6 +204,9 @@ function MessageArrived(message) {
 
     var column = document.getElementById(shopId).children[columnIndexs[sensorType]];
     column.innerHTML = count;
+    if (payload.delete === true) {
+        column.innerHTML = "";
+    }
     animatee(column, 'newVal');
 
 }

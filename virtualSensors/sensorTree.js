@@ -82,17 +82,19 @@ function MessageArrivedGraph(message) {
     var result = {
         topic: message.destinationName,
         payload: message.payloadString,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        retained: message.retained
     };
 
     if (message.destinationName.match(displayRegex)) {
+        result['level'] = 3;
         result['name'] = payload.action.message;
         result['color'] = payload.action.color;
         result['image'] = payload.action.symbol;
-        result['id'] = 'display '+shopId;
-        result['title'] = 'display<br>'+shopId;
+        result['id'] = 'display ' + shopId;
+        result['title'] = 'display<br>' + shopId;
 
-        if(compareWithoutTime(shopsGraph[shopId]['actuators']['display'], result)){
+        if (compareWithoutTime(shopsGraph[shopId]['actuators']['display'], result)) {
             return;
         }
 
@@ -100,76 +102,104 @@ function MessageArrivedGraph(message) {
     } else {
         var sensorType = payload.sensor_type;
         var sensorName = 'virtual ' + sensorType + '<br>' + shopId;
-        if(payload.sensor_id != null){
-            sensorName = sensorType+'<br>'+payload.sensor_id;
+        if (payload.sensor_id != null) {
+            sensorName = sensorType + '<br>' + payload.sensor_id;
         }
         result['title'] = sensorName;
         result['id'] = sensorName;
 
         if (message.destinationName.match(peopleTRegex)) {
+            result['level'] = 2;
             //people message
             result['count'] = payload.count;
             result['color'] = '#BEB8AF';
             result['name'] = 'Count: ' + result['count'];
-            if(compareWithoutTime(shopsGraph[shopId]['people'], result)){
+            if (compareWithoutTime(shopsGraph[shopId]['people'], result)) {
                 return;
             }
             shopsGraph[shopId]['people'] = result;
         } else if (message.destinationName.match(wifiVirtRegex)) {
+            result['level'] = 1;
             //virt wifi message
             result['count'] = Object.keys(payload.clients).length;
             result['color'] = '#FCF4B7';
             result['name'] = 'Count: ' + result['count'];
-            if(compareWithoutTime(shopsGraph[shopId]['sensors']['wifi'], result)){
+            if (compareWithoutTime(shopsGraph[shopId]['sensors']['wifi'], result)) {
                 return;
             }
             shopsGraph[shopId]['sensors']['wifi'] = result;
+            if (payload.delete === true) {
+                shopsGraph[shopId]['sensors']['wifi'] = null;
+            }
 
         } else if (message.destinationName.match(bleVirtRegex)) {
+            result['level'] = 1;
             result['count'] = payload.clients.length;
             result['color'] = '#f3c4ff';
             result['name'] = 'Count: ' + result['count'];
-            if(compareWithoutTime(shopsGraph[shopId]['sensors']['ble'], result)){
+            if (compareWithoutTime(shopsGraph[shopId]['sensors']['ble'], result)) {
                 return;
             }
             shopsGraph[shopId]['sensors']['ble'] = result;
+            if (payload.delete === true) {
+                shopsGraph[shopId]['sensors']['ble'] = null;
+            }
 
         } else if (message.destinationName.match(camVirtRegex)) {
+            result['level'] = 1;
             result['count'] = payload.count;
             result['color'] = '#a7ecfd';
             result['name'] = 'Count: ' + result['count'];
-            if(compareWithoutTime(shopsGraph[shopId]['sensors']['cam'], result)){
+            if (compareWithoutTime(shopsGraph[shopId]['sensors']['cam'], result)) {
                 return;
             }
             shopsGraph[shopId]['sensors']['cam'] = result;
+            if (payload.delete === true) {
+                shopsGraph[shopId]['sensors']['cam'] = null;
+            }
 
         } else if (message.destinationName.match(camRawRegex)) {
+            result['level'] = 0;
             result['count'] = payload.count;
             result['color'] = '#DEF3FD';
             result['name'] = 'Count: ' + result['count'];
-            if(compareWithoutTime(shopsGraph[shopId]['sensors_raw']['cam'][sensorName], result)){
+            result['emptyMsg'] = generateMessagesEmpty(shopId, sensorType, payload.sensor_id);
+            if (compareWithoutTime(shopsGraph[shopId]['sensors_raw']['cam'][sensorName], result)) {
                 return;
             }
             shopsGraph[shopId]['sensors_raw']['cam'][sensorName] = result;
+            if (payload.delete === true) {
+                delete shopsGraph[shopId]['sensors_raw']['cam'][sensorName]
+            }
 
         } else if (message.destinationName.match(bleRawRegex)) {
+            result['level'] = 0;
             result['count'] = payload.clients.length;
             result['color'] = '#F0DEFD';
             result['name'] = 'Count: ' + result['count'];
-            if(compareWithoutTime(shopsGraph[shopId]['sensors_raw']['ble'][sensorName], result)){
+            result['emptyMsg'] = generateMessagesEmpty(shopId, sensorType, payload.sensor_id);
+            if (compareWithoutTime(shopsGraph[shopId]['sensors_raw']['ble'][sensorName], result)) {
                 return;
             }
             shopsGraph[shopId]['sensors_raw']['ble'][sensorName] = result;
+            if (payload.delete === true) {
+                delete shopsGraph[shopId]['sensors_raw']['ble'][sensorName]
+            }
 
         } else if (message.destinationName.match(wifiRawRegex)) {
             // raw wifi
+            result['level'] = 0;
             result['count'] = Object.keys(payload.clients).length;
             result['color'] = '#FCF7DE';
             result['name'] = 'Count: ' + result['count'];
-            if(compareWithoutTime(shopsGraph[shopId]['sensors_raw']['wifi'][sensorName], result )){
+            result['emptyMsg'] = generateMessagesEmpty(shopId, sensorType, payload.sensor_id);
+            if (compareWithoutTime(shopsGraph[shopId]['sensors_raw']['wifi'][sensorName], result)) {
                 return;
             }
             shopsGraph[shopId]['sensors_raw']['wifi'][sensorName] = result;
+            if (payload.delete === true) {
+                delete shopsGraph[shopId]['sensors_raw']['wifi'][sensorName]
+            }
 
         } else {
             console.log("Uncatched topic: " + message.destinationName);
@@ -181,11 +211,86 @@ function MessageArrivedGraph(message) {
 
 }
 
-function compareWithoutTime(reference, value){
-    var actualValue = Object.assign({}, reference, {timestamp: undefined});
-    var croppedValue = Object.assign({}, value, {timestamp: undefined});
+function generateMessagesEmpty(shopId, sensorType, sensorId) {
+    var namespace = 'de/smartcity/2020/mymall';
+    var value = 0;
+    console.log(shopId, sensorType, value);
+
+
+    var id = sensorId;
+
+    var topics = {
+        ble: namespace + '/shops/' + shopId + '/sensors_raw/' + sensorType + '/' + sensorId + '/list',
+        cam: namespace + '/shops/' + shopId + '/sensors_raw/' + sensorType + '/' + sensorId + '/count',
+        wifi: namespace + '/shops/' + shopId + '/sensors_raw/' + sensorType + '/' + sensorId + '/list'
+    };
+
+    var topic = topics[sensorType];
+    var payload = {
+        sensor_type: sensorType,
+        sensor_id: id, shop_id: shopId,
+        delete: true
+    };
+    if (sensorType === 'ble') {
+        var clients = Array.from(Array(value).keys()).map(String);
+        payload.clients = clients;
+    } else if (sensorType === 'cam') {
+        payload.count = value;
+    } else if (sensorType === 'wifi') {
+        var clientsArray = Array.from(Array(value).keys()).map(String);
+        var clients = {};
+        clientsArray.forEach(function (val) {
+            clients['ip' + val] = 'hmac' + val;
+        });
+        payload.clients = clients;
+    } else {
+        console.log('Unreachable case!! type: ', sensorType);
+    }
+    var results = [];
+    var message = new Paho.MQTT.Message(JSON.stringify(payload));
+    message.destinationName = topic;
+    results.push(message);
+    if (sensorType === 'cam') {
+        return results;
+    }
+
+    topics = {
+        ble: namespace + '/shops/' + shopId + '/sensors_raw/' + sensorType + '/' + sensorId + '/count',
+        cam: namespace + '/shops/' + shopId + '/sensors_raw/' + sensorType + '/' + sensorId + '/count',
+        wifi: namespace + '/shops/' + shopId + '/sensors_raw/' + sensorType + '/' + sensorId + '/count'
+    };
+
+
+    topic = topics[sensorType];
+    payload = {
+        sensor_type: sensorType,
+        sensor_id: id, shop_id: shopId,
+        delete: true
+    };
+
+    if (sensorType === 'ble') {
+        var clients = Array.from(Array(value).keys()).map(String);
+        payload.count = clients.length;
+    } else if (sensorType === 'wifi') {
+        var clientsArray = Array.from(Array(value).keys()).map(String);
+        payload.count = clientsArray.length;
+    } else {
+        console.log("Should never happen");
+        return results;
+    }
+
+    message = new Paho.MQTT.Message(JSON.stringify(payload));
+    message.destinationName = topic;
+    results.push(message);
+
+    return results;
+}
+
+function compareWithoutTime(reference, value) {
+    var actualValue = Object.assign({}, reference, {timestamp: undefined, emptyMsg: undefined});
+    var croppedValue = Object.assign({}, value, {timestamp: undefined, emptyMsg: undefined});
     // Compare without timestamp
-    if(JSON.stringify(actualValue) === JSON.stringify(croppedValue)){
+    if (JSON.stringify(actualValue) === JSON.stringify(croppedValue)) {
         return true;
     }
     return false;
@@ -198,7 +303,7 @@ function updateShopGraph(shopId) {
     var cData = [];
     var cNodes = [];
 
-    if(shop['actuators']['display'] != null){
+    if (shop['actuators']['display'] != null) {
         cNodes.push(shop['actuators']['display']);
     }
 
@@ -239,7 +344,7 @@ function updateShopGraph(shopId) {
 
     var options = {
         chart: {
-            height: Math.max(Math.max(sensorCount, sensorTypeCount),1)*85+50,
+            height: Math.max(Math.max(sensorCount, sensorTypeCount), 1) * 85 + 50,
             // width: 600,
             inverted: false,
             renderTo: 'c' + shopId,
@@ -265,6 +370,24 @@ function updateShopGraph(shopId) {
             nodes: cNodes,
             colorByPoint: false,
             borderColor: 'white',
+            events: {
+                click: function (event) {
+                    if (event.shiftKey && event.point.emptyMsg != null) {
+                        // override with zero values
+                        event.point.emptyMsg.forEach(function (msg) {
+                            msg.retained = event.point.retained;
+                            mqttClientGraph.send(msg);
+                        });
+                        // delete message
+                        event.point.emptyMsg.forEach(function (msg) {
+                            msg.retained = true;
+                            msg.payload = "";
+                            mqttClientGraph.send(msg);
+                        });
+                    }
+
+                }
+            },
             dataLabels: {
                 color: 'black',
                 nodeFormatter: function () {
@@ -277,13 +400,13 @@ function updateShopGraph(shopId) {
                         .call(this);
 
                     // Do some modification
-                    if(this.point.timestamp+3000 > Date.now()) {
+                    if (this.point.timestamp + 3000 > Date.now()) {
                         html = html.replace(
                             '<div ',
                             '<div class="newValGraph" '
                         );
                     }
-                    console.log(html);
+                    //console.log(html);
                     return html;
                 }
             }
@@ -301,6 +424,7 @@ function updateShopGraph(shopId) {
 
 
 }
+
 /*
 var chart = Highcharts.chart('container', {
 

@@ -19,6 +19,17 @@ class Aggregator:
             self.log.info('Added sensor instance for shop %s: %s', shop_id, sensor_id)
         shop_value[sensor_id] = value
 
+    def delete(self, shop_id, sensor_id):
+        if shop_id not in self.shop_values:
+            self.log.info("New shop: %s", shop_id)
+            self.shop_values[shop_id] = {}
+            return
+        shop_value = self.shop_values[shop_id]
+        if sensor_id not in shop_value:
+            return
+        self.log.info('Deleted sensor instance for shop %s: %s', shop_id, sensor_id)   
+        del shop_value[sensor_id]  
+
     def get_values(self, shop_id):
         if shop_id not in self.shop_values:
             return
@@ -46,11 +57,17 @@ class Aggregator:
             self.log.warning("Can not aggregate message for sensor %s %s from topic %s: payload missing",
                             self.sensor_type, sensor_id, topic)
             return
-        self.update(shop_id, sensor_id, payload)
+        if 'delete' in message and message['delete']:
+            # delete this sensor
+            self.delete(shop_id, sensor_id)
+        else:
+            self.update(shop_id, sensor_id, payload)
         return self.aggregate_values(shop_id, self.get_values(shop_id))
 
     def generate_payload(self, shop_id, data):
         payload = {'shop_id': shop_id, 'aggregated_sensors': len(self.get_values(shop_id)),
                    'sensor_type': self.sensor_type}
+        if len(self.get_values(shop_id)) == 0:
+            payload.update({'delete': True})
         payload.update(data)
         return payload
