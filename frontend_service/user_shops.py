@@ -37,6 +37,9 @@ class UserShopListApi(Resource):
                 user_shops = UserShops.objects.get(user_id=user_id)
                 user_shops.shops = body
                 user_shops.save()
+                if len(user_shops.shops) == 0:
+                    # work around to add an empty list to the db
+                    user_shops.update(add_to_set__shops = []) 
                 return "", 200
             except ValidationError:
                 raise SchemaValidationError
@@ -65,6 +68,9 @@ class UserShopApi(Resource):
             user_shops = UserShops.objects.get(user_id=user_id)
             user_shops.shops.remove(shop_id)
             user_shops.save()
+            if len(user_shops.shops) == 0:
+                # work around to add an empty list to the db
+                user_shops.update(add_to_set__shops = []) 
         except ValueError:
             # shop is not in the list
             pass
