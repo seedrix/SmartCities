@@ -67,7 +67,7 @@ def create_app():
     # Setup Flask and load app.config
     app = Flask(__name__)
     app.config.from_object(__name__+'.ConfigClass')
-    app.config.from_envvar('ENV_FILE_LOCATION')
+    app.config.from_envvar('FRONTEND_SERVICE_ENV_FILE_LOCATION')
     api = Api(app, errors=errors)
     jwt = JWTManager(app)
 
