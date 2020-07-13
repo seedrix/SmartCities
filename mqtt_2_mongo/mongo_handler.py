@@ -17,7 +17,6 @@ MONGO_TIMEOUT = 1000  # Time in ms
 MONGO_DATETIME_FORMAT = "%d/%m/%Y %H:%M:%S"
 
 
-# https://github.com/David-Lor/MQTT2MongoDB/blob/master/mongo.py
 
 class Mongo(object):
     def __init__(self):
