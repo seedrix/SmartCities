@@ -113,7 +113,6 @@ class PlanningInstance():
         )
         )
         """
-        print(problem)
         return problem
 
     def _compute_average(self) -> int:
@@ -131,7 +130,8 @@ if __name__ == "__main__":
     number_of_shops = 3
     number_of_lists = 5
     people_at_shop = [0 for i in range(number_of_shops)]
-    cap_at_shop = [1,2,3]
+    people_at_shop[1] = 10
+    cap_at_shop = [4,5,6]
     shop_options = []
     for i in range(number_of_lists):
         # shop_options.append((i, 0))

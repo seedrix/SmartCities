@@ -3,7 +3,7 @@
 (:objects shop0 shop1 shop2 - shop
 list0 list1 list2 list3 list4 - list)
 (:init (= (people-at-shop shop0) 0)
-(= (people-at-shop shop1) 0)
+(= (people-at-shop shop1) 10)
 (= (people-at-shop shop2) 0)
 (shop-option list0 shop1)
 (shop-option list0 shop2)
@@ -19,9 +19,9 @@ list0 list1 list2 list3 list4 - list)
 (:goal            
         (and (forall (?l - list)
             (list-set ?l)
-        )(and (<= (people-at-shop shop0) 1))
-(and (<= (people-at-shop shop1) 2))
-(and (<= (people-at-shop shop2) 3))
+        )(and (<= (people-at-shop shop0) 9))
+(and (<= (people-at-shop shop1) 10))
+(and (<= (people-at-shop shop2) 11))
 
                     
         )
