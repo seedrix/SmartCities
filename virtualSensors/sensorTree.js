@@ -72,7 +72,7 @@ const displayRegex = /^de\/smartcity\/2020\/mymall\/shops\/[^\/]+\/actuators\/di
 
 /*Callback for incoming message processing */
 function MessageArrivedGraph(message) {
-    console.log(message.destinationName + " : " + message.payloadString);
+    //console.log(message.destinationName + " : " + message.payloadString);
     //addTableElement(message.destinationName, message.payloadString);
 
     var count = -1;
@@ -287,8 +287,8 @@ function generateMessagesEmpty(shopId, sensorType, sensorId) {
 }
 
 function compareWithoutTime(reference, value) {
-    var actualValue = Object.assign({}, reference, {timestamp: undefined, emptyMsg: undefined});
-    var croppedValue = Object.assign({}, value, {timestamp: undefined, emptyMsg: undefined});
+    var actualValue = Object.assign({}, reference, {timestamp: undefined, emptyMsg: undefined, offset: undefined, height:undefined});
+    var croppedValue = Object.assign({}, value, {timestamp: undefined, emptyMsg: undefined, offset: undefined, height: undefined});
     // Compare without timestamp
     if (JSON.stringify(actualValue) === JSON.stringify(croppedValue)) {
         return true;
@@ -313,22 +313,14 @@ function updateShopGraph(shopId) {
             cData.push([shop['people'].id, shop['actuators']['display'].id]);
         }
     }
-    var sensorTypeCount = 0;
-    Object.keys(shop['sensors']).forEach(function (virtSensorType) {
-        var virtSensor = shop['sensors'][virtSensorType];
-        if (virtSensor != null) {
-            sensorTypeCount++;
-            cNodes.push(virtSensor);
-            if (shop['people'] != null) {
-                cData.push([virtSensor.id, shop['people'].id]);
-            }
-        }
-    });
+
     var sensorCount = 0;
+    var typesArray = [];
     Object.keys(shop['sensors_raw']).forEach(function (sensorsType) {
         var sensors = shop['sensors_raw'][sensorsType];
         Object.keys(sensors).forEach(function (sensorId) {
             var sensor = sensors[sensorId];
+            typesArray.push(sensorsType);
             sensorCount++;
             if (sensor != null) {
                 cNodes.push(sensor);
@@ -338,13 +330,107 @@ function updateShopGraph(shopId) {
             }
         })
     });
+    var sensorTypeCount = Object.keys(shop['sensors']).filter(n => n).length;
+    var height = Math.max(Math.max(sensorCount, sensorTypeCount), 1) * 85 + 50;
+    var columnHeight = (height/sensorCount);
+
+    var bottomHalf = [];
+    var myType = 0;
+    var otherTyp = 0;
+    var topHalf = [];
+        Object.keys(shop['sensors']).forEach(function (virtSensorType) {
+        var virtSensor = shop['sensors'][virtSensorType];
+        if (virtSensor != null) {
+            //virtSensor['height'] = 200;
+            if(virtSensorType === 'ble'){
+              topHalf = typesArray.slice(0, Math.floor(typesArray.length / 2));
+              myType = 0;
+              otherTyp = 0;
+              topHalf.forEach(function (value) {
+                  if(value === virtSensorType){
+                      myType++;
+                  }else{
+                      otherTyp++;
+                  }
+              });
+
+               //virtSensor['height'] = 200;
+                virtSensor['offset'] = "-"+(Math.max(otherTyp-1,0)*(25*(myType+Math.max(otherTyp-1,0))))+"%";
+            }else if(virtSensorType === 'wifi'){
+                //console.log("wifi", columnHeight, (height/sensorCount)*Object.keys(shop['sensors_raw'][virtSensorType]).length, Object.keys(shop['sensors_raw'][virtSensorType]).length);
+                //virtSensor['offset'] = columnHeight*Math.floor((Object.keys(shop['sensors_raw'][virtSensorType]).length/2));
+               // virtSensor['offset'] = "25%";
+                bottomHalf = typesArray.slice(Math.ceil(typesArray.length / 2));
+                myType = 0;
+                otherTyp = 0;
+                bottomHalf.forEach(function (value) {
+                    if(value === virtSensorType){
+                        myType++;
+                    }else{
+                        otherTyp++;
+                    }
+                });
+                if(shopId === "shop2") {
+                    console.log(otherTyp, myType, bottomHalf);
+                }
+                //virtSensor['height'] = 200;
+                virtSensor['offset'] = (Math.max(otherTyp-1,0)*(25*(myType+Math.max(otherTyp-1,0))))+"%";
+            }else if(virtSensorType === 'cam'){
+             //   if(Object.keys(shop['sensors_raw'][virtSensorType]).length < sensorCount/2){
+                    var elementsTop = Object.keys(shop['sensors_raw']['ble']).length;
+                    var elementsBelow = Object.keys(shop['sensors_raw']['wifi']).length;
+                    if(elementsBelow === elementsTop || Math.abs(elementsBelow - elementsTop) <=2 ){
+                        //do nothing
+                    }else if (elementsBelow > elementsTop){
+                        topHalf = typesArray.slice(0, Math.floor(typesArray.length / 2));
+                        myType = 0;
+                        otherTyp = 0;
+                        topHalf.forEach(function (value) {
+                            if(value === 'ble'){
+
+                            }else if(value === virtSensorType){
+                                myType++;
+                            }else{
+                                otherTyp++;
+                            }
+                        });
+
+                        //virtSensor['height'] = 200;
+                        virtSensor['offset'] = "-"+(otherTyp*(25*(myType+otherTyp)))+"%";
+                    }else{
+                        bottomHalf = typesArray.slice(Math.floor(typesArray.length / 2));
+                        myType = 0;
+                        otherTyp = 0;
+                        bottomHalf.forEach(function (value) {
+                            if(value === 'wifi'){
+
+                            }else if(value === virtSensorType){
+                                myType++;
+                            }else{
+                                otherTyp++;
+                            }
+                        });
+
+                        //virtSensor['height'] = 200;
+                        virtSensor['offset'] = (Math.max(otherTyp-1,0)*(25*(myType+Math.max(otherTyp-1,0))))+"%";
+                    }
+
+               // }
+            }
+            cNodes.push(virtSensor);
+            if (shop['people'] != null) {
+                cData.push([virtSensor.id, shop['people'].id]);
+            }
+        }
+    });
+   
 
     //console.log(cData);
     //console.log(cNodes);
 
     var options = {
         chart: {
-            height: Math.max(Math.max(sensorCount, sensorTypeCount), 1) * 85 + 50,
+            height: height,
             // width: 600,
             inverted: false,
             renderTo: 'c' + shopId,
@@ -359,6 +445,8 @@ function updateShopGraph(shopId) {
             series: {
                 nodeWidth: '22%',
                 animation: 0
+              //  nodePadding: 10
+           //     nodePadding: '10'
             }
         },
 
